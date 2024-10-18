@@ -1,0 +1,63 @@
+package com.doranco.project.servicesImp;
+
+import com.doranco.project.entities.Feedback;
+import com.doranco.project.entities.User;
+import com.doranco.project.repositories.IFeedbackRepository;
+import com.doranco.project.repositories.IUserRepository;
+import com.doranco.project.services.FeedbackService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+
+public class FeedbackServiceImp implements FeedbackService {
+    @Autowired
+    IUserRepository userRepository;
+    @Autowired
+    IFeedbackRepository feedbackRepository;
+    @Override
+    public User addUserWithFeedback(User user, Feedback feedback) {
+        feedback.setUser(user);
+
+        user.setFeedback(feedback);
+
+        userRepository.save(user);
+
+        return user;
+    }
+
+
+    @Override
+    public Feedback updateFeedbackById(Long id, Feedback updatedFeedback) {
+
+        Optional<Feedback> optionalFeedback = feedbackRepository.findById(id);
+        if(optionalFeedback.isPresent()) {
+
+            Feedback existingFeedback = optionalFeedback.get();
+            existingFeedback.setContent(updatedFeedback.getContent());
+            existingFeedback.setRating(updatedFeedback.getRating());
+
+            return feedbackRepository.save(existingFeedback);
+        }
+        else {
+            throw new RuntimeException("Feedback not found with id: " + id);
+
+        }
+    }
+    @Override
+    public List<Feedback>   getAllFeedbacks () {
+        return feedbackRepository.findAll();
+
+    }
+
+    @Override
+    public List<Feedback> getFeedbacksByRating (Sort.Direction direction) {
+        return feedbackRepository.findAll(Sort.by(direction, "rating"));
+
+
+    }
+}
