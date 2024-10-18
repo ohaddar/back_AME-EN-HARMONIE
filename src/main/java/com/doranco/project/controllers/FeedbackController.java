@@ -5,7 +5,7 @@ import com.doranco.project.entities.User;
 import com.doranco.project.services.FeedbackService;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
