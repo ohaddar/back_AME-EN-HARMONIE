@@ -20,7 +20,7 @@ public class QuestionnaireServiceImp implements QuestionnaireService {
 
     }
     @Override
-    public List<Questionnaire> getAllQuestionnaire () {
-        return questionnaireRepository.findAll();
+    public Questionnaire getQuestionnaire () {
+        return questionnaireRepository.findAll().getFirst();
     }
 }

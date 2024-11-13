@@ -20,13 +20,13 @@ public class UserRoleExtractor {
         return  hasUserRole;
     }
     static public boolean isAdmin(Authentication authentication) {
-        boolean hasUserRole = false;
+        boolean hasAdminRole = false;
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (GrantedAuthority authority:authorities) {
-            if(authority.getAuthority().equals(RoleEnum.ADMIN.toString())) {
-                hasUserRole= true;
+            if(authority.getAuthority().equals(RoleEnum.USER.toString())) {
+                hasAdminRole= true;
             }
         }
-        return hasUserRole;
+        return hasAdminRole;
     }
 }

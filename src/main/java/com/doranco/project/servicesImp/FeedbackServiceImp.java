@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,14 +21,12 @@ public class FeedbackServiceImp implements FeedbackService {
     @Autowired
     IFeedbackRepository feedbackRepository;
     @Override
-    public User addUserWithFeedback(User user, Feedback feedback) {
-        feedback.setUser(user);
+    public Feedback addFeedback( Feedback feedback) {
+        feedback.setPublicationDate(new Date());
 
-        user.setFeedback(feedback);
 
-        userRepository.save(user);
 
-        return user;
+        return  feedbackRepository.save(feedback);
     }
 
 
@@ -52,6 +51,11 @@ public class FeedbackServiceImp implements FeedbackService {
     public List<Feedback>   getAllFeedbacks () {
         return feedbackRepository.findAll();
 
+    }
+
+    @Override
+    public Optional<Feedback> getFeedbackById(Long id) {
+        return feedbackRepository.findById(id);
     }
 
     @Override

@@ -6,6 +6,8 @@ import com.doranco.project.services.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 
 public class ContactServiceImp implements ContactService {
@@ -15,5 +17,10 @@ public class ContactServiceImp implements ContactService {
     public Contact saveContact(Contact contact) {
         return contactRepository.save(contact);
 
+    }
+
+    @Override
+    public List<Contact> getAllContacts() {
+        return contactRepository.findAll();
     }
 }

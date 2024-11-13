@@ -16,11 +16,20 @@ public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name = "content", nullable = false)
+    @Column(name = "feedback_title", nullable = false)
+    private String title;
+    @Column(name = "feedback_content", nullable = false)
     private String content;
-    @Column(name = "rating", nullable = false)
+    @Column(name = "feedback_rating", nullable = false)
     private int rating;
-    @Column(name="publication_date", nullable = false)
+
+    @Column(name = "feedback_image", columnDefinition = "LONGBLOB")
+
+    @Lob
+    private byte[] image;
+    private String imageUrl;
+
+    @Column(name="feedback_publication_date", nullable = false)
     private Date publicationDate;
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)

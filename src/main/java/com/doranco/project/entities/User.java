@@ -10,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,21 +35,15 @@ public class User  implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Feedback feedback;
-    private List<RoleEnum> roles = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private RoleEnum role ;
+
 
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for (RoleEnum roleEnum:roles) {
-            GrantedAuthority authority = new SimpleGrantedAuthority(roleEnum.toString());
-            grantedAuthorities.add(authority);
 
-        }
-        return grantedAuthorities;
-    }
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));}
 
     @Override
     public String getUsername() {

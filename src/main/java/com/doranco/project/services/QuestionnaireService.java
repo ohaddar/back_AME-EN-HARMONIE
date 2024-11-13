@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface QuestionnaireService {
     public Questionnaire saveQuestionnaire(Questionnaire questionnaire);
-    public List<Questionnaire> getAllQuestionnaire ();
+    public Questionnaire getQuestionnaire ();
 }

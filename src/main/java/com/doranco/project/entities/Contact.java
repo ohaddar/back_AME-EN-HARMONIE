@@ -25,6 +25,10 @@ public class Contact {
 
     private String email;
 
+    @Column(name ="objet", nullable = false ,length = 50)
+
+    private String objet;
+
     @Column(name ="sujet", nullable = false ,length = 255)
 
     private String sujet;

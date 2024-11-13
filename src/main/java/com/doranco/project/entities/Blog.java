@@ -21,9 +21,17 @@ public class Blog {
     @Column(name = "blog_title",unique = true,nullable = false)
 
     private String title;
-    @Column(name = "blog_content",nullable = false)
+    @Column(name = "blog_content",nullable = false, columnDefinition = "TEXT")
 
     private String content;
+
+    @Column(name = "blog_image", columnDefinition = "LONGBLOB")
+
+    @Lob
+    private byte[] image;
+    private String imageUrl;
+
+
     @Column(name = "blog_creation_date",nullable = false)
     private Date creationDate;
     @Column(name = "blog_category", nullable = false)

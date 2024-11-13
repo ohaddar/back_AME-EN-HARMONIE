@@ -27,8 +27,8 @@ public class QuestionnaireController {
     }
     @GetMapping("/show")
 
-    public ResponseEntity<List<Questionnaire>> getQuestionnaire() {
-        List<Questionnaire> listOfQuestions = questionnaireService.getAllQuestionnaire();
+    public ResponseEntity<Questionnaire> getQuestionnaire() {
+        Questionnaire listOfQuestions = questionnaireService.getQuestionnaire();
         return ResponseEntity.ok(listOfQuestions);
     }
 
