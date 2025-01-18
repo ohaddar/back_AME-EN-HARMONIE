@@ -3,18 +3,12 @@ package com.doranco.project.controllers;
 import com.doranco.project.entities.Feedback;
 import com.doranco.project.entities.User;
 import com.doranco.project.services.FeedbackService;
-import com.doranco.project.utils.FileUpload;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,16 +19,12 @@ import java.util.stream.Collectors;
 public class FeedbackController {
     private final FeedbackService feedbackService;
 
-    @Autowired
-    FileUpload fileUpload;
-
     public FeedbackController(FeedbackService feedbackService) {
         this.feedbackService = feedbackService;
     }
 
     @PostMapping("/save")
     public ResponseEntity<Feedback> saveFeedback(
-            @RequestParam("image") MultipartFile file,
             @RequestParam("feedback") String feedbackJson,
             Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
@@ -51,18 +41,13 @@ public class FeedbackController {
             // Set the user on the feedback
             feedback.setUser(authenticatedUser);
 
-            // Process and save image if provided
-            if (file != null && !file.isEmpty()) {
-                byte[] imageData = fileUpload.uploadFile(file);
-                feedback.setImage(imageData);
-            }
-
-            // Save the feedback
             Feedback savedFeedback = feedbackService.addFeedback(feedback);
+            System.out.println("Feedback created: " + savedFeedback);
+
             return ResponseEntity.ok(savedFeedback);
 
         } catch (Exception e) {
-            e.printStackTrace();
+
             return ResponseEntity.status(500).build();
         }
     }
@@ -72,9 +57,6 @@ public class FeedbackController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<Feedback>> getFeedbacks() {
         List<Feedback> listOfAllFeedbacks = feedbackService.getAllFeedbacks();
-        for (Feedback feedback : listOfAllFeedbacks) {
-            feedback.setImageUrl("http://localhost:8080/feedback/image/" + feedback.getId());
-        }
         return ResponseEntity.ok(listOfAllFeedbacks);
     }
 
@@ -87,9 +69,6 @@ public class FeedbackController {
                 .limit(2)
                 .collect(Collectors.toList());
 
-        for (Feedback feedback : limitedFeedbacks) {
-            feedback.setImageUrl("http://localhost:8080/feedback/image/" + feedback.getId());
-        }
 
         return ResponseEntity.ok(limitedFeedbacks);
     }
@@ -102,33 +81,39 @@ public class FeedbackController {
 
         if (feedbacksById.isPresent()) {
             Feedback feedback = feedbacksById.get();
-            feedback.setImageUrl("http://localhost:8080/feedback/image/" + feedback.getId());  // Dynamically set imageUrl
             return ResponseEntity.ok(feedback);
         } else {
             return ResponseEntity.notFound().build();
         }
 
     }
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Feedback> getFeedbackByUserId(Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-    @GetMapping("/sorted/{direction}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<Feedback>> getFeedbacksByRating(@PathVariable String direction) {
-        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-        List<Feedback> feedbacks = feedbackService.getFeedbacksByRating(sortDirection);
-        return ResponseEntity.ok(feedbacks);
-    }
+        try {
+            // Retrieve the current authenticated user
+            User authenticatedUser = (User) authentication.getPrincipal();
 
-    @GetMapping("/image/{id}")
-    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
-        Optional<Feedback> feedback = feedbackService.getFeedbackById(id);
+            // Call the service method to get the feedback by user ID
+            Optional<Feedback> feedback = feedbackService.getFeedbackByUserId(authenticatedUser.getId());
 
-        if (feedback.isPresent() && feedback.get().getImage() != null) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG) // Assuming JPEG format
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"image.jpg\"")
-                    .body(feedback.get().getImage());
-        } else {
-            return ResponseEntity.notFound().build();
+            if (feedback.isPresent()) {
+                return ResponseEntity.ok(feedback.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
+
+
+
 }

@@ -1,12 +1,10 @@
 package com.doranco.project.servicesImp;
 
 import com.doranco.project.entities.Feedback;
-import com.doranco.project.entities.User;
 import com.doranco.project.repositories.IFeedbackRepository;
 import com.doranco.project.repositories.IUserRepository;
 import com.doranco.project.services.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -23,9 +21,6 @@ public class FeedbackServiceImp implements FeedbackService {
     @Override
     public Feedback addFeedback( Feedback feedback) {
         feedback.setPublicationDate(new Date());
-
-
-
         return  feedbackRepository.save(feedback);
     }
 
@@ -38,7 +33,6 @@ public class FeedbackServiceImp implements FeedbackService {
 
             Feedback existingFeedback = optionalFeedback.get();
             existingFeedback.setContent(updatedFeedback.getContent());
-            existingFeedback.setRating(updatedFeedback.getRating());
 
             return feedbackRepository.save(existingFeedback);
         }
@@ -59,9 +53,9 @@ public class FeedbackServiceImp implements FeedbackService {
     }
 
     @Override
-    public List<Feedback> getFeedbacksByRating (Sort.Direction direction) {
-        return feedbackRepository.findAll(Sort.by(direction, "rating"));
-
-
+    public Optional<Feedback> getFeedbackByUserId(Long userId) {
+        return feedbackRepository.findFeedbackByUserId(userId);
     }
+
+
 }

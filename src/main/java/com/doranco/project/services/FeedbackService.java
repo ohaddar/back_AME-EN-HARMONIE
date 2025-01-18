@@ -12,9 +12,10 @@ import java.util.Optional;
 @Service
 
 public interface FeedbackService {
-    public Feedback addFeedback(Feedback feedback);
-    public Feedback updateFeedbackById(Long id, Feedback updatedFeedback);
-    public List<Feedback> getAllFeedbacks ();
-    public Optional<Feedback>getFeedbackById(Long id);
-    public List<Feedback> getFeedbacksByRating (Sort.Direction direction);
+    Feedback addFeedback(Feedback feedback);
+    Feedback updateFeedbackById(Long id, Feedback updatedFeedback);
+    List<Feedback> getAllFeedbacks();
+    Optional<Feedback>getFeedbackById(Long id);
+    Optional<Feedback>getFeedbackByUserId(Long userId);
+
 }

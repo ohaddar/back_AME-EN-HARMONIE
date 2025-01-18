@@ -20,14 +20,6 @@ public class Feedback {
     private String title;
     @Column(name = "feedback_content", nullable = false)
     private String content;
-    @Column(name = "feedback_rating", nullable = false)
-    private int rating;
-
-    @Column(name = "feedback_image", columnDefinition = "LONGBLOB")
-
-    @Lob
-    private byte[] image;
-    private String imageUrl;
 
     @Column(name="feedback_publication_date", nullable = false)
     private Date publicationDate;
