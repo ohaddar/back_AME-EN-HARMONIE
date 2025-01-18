@@ -36,6 +36,7 @@ public class AuthController {
          response.put("firstname", registredUser.getFirstname());
          response.put("lastname", registredUser.getLastname());
          response.put("email", registredUser.getEmail());
+         response.put("avatar", registredUser.getAvatar());
          response.put("role", registredUser.getRole());
 
          return ResponseEntity.ok(response);
@@ -62,7 +63,9 @@ public class AuthController {
             response.put("firstname", loggedInUser.get().getFirstname());
             response.put("lastname", loggedInUser.get().getLastname());
             response.put("email", loggedInUser.get().getEmail());
-            response.put("role", loggedInUser.get().getRole());
+        response.put("avatar", loggedInUser.get().getAvatar());
+
+        response.put("role", loggedInUser.get().getRole());
             String jwt =  jwtService.generateToken(loggedInUser.get());
         response.put("token", jwt);
         return ResponseEntity.ok(response);

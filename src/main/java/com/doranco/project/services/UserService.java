@@ -7,6 +7,6 @@ import java.util.Optional;
 
 @Service
 public interface UserService {
-    public User register(User user);
-    public Optional<User> login(String email, String password);
+    User register(User user);
+    Optional<User> login(String email, String password);
 }
