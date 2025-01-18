@@ -1,5 +1,6 @@
 package com.doranco.project.entities;
 
+import com.doranco.project.enums.CategoryEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,5 +36,6 @@ public class Blog {
     @Column(name = "blog_creation_date",nullable = false)
     private Date creationDate;
     @Column(name = "blog_category", nullable = false)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private CategoryEnum category;
 }
