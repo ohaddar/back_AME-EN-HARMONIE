@@ -7,6 +7,6 @@ import java.util.List;
 @Service
 
 public interface QuestionnaireService {
-    public Questionnaire saveQuestionnaire(Questionnaire questionnaire);
-    public Questionnaire getQuestionnaire ();
+    Questionnaire saveQuestionnaire(Questionnaire questionnaire);
+    Questionnaire getQuestionnaire();
 }
