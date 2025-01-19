@@ -24,35 +24,17 @@ public class ResultController {
     IUserRepository userRepository;
     @PostMapping("/save")
     public ResponseEntity<Result> saveResult(@RequestBody Result result, Authentication authentication) {
-        String username = authentication.getName();
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
-
-        // Set the user (from authentication) for the result (userId is passed)
-        result.setUser(user); // The user object is set in the result
-
-        // Save the result
-        Result savedResult = resultService.saveUserTestResult(result);
+        Result savedResult = resultService.saveUserTestResult(result,authentication);
         return ResponseEntity.ok(savedResult);
     }
 
     @GetMapping("/user")
     public ResponseEntity<List<Result>> getResultsByUserId( Authentication authentication) {
-        if (authentication == null || authentication.getPrincipal() == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
 
-        try {
-            // Retrieve the current authenticated user
-            User authenticatedUser = (User) authentication.getPrincipal();
-
-            // Call the service method to get the feedback by user ID
-            List<Result> results = resultService.getResultsByUserId(authenticatedUser.getId());
+            List<Result> results = resultService.getResultsByUserId(authentication);
 
             return ResponseEntity.ok(results);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+
     }
     }
 
