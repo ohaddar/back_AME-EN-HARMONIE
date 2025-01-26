@@ -3,6 +3,7 @@ package com.doranco.project.controllers;
 import com.doranco.project.entities.Feedback;
 import com.doranco.project.services.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -19,11 +20,18 @@ public class FeedbackController {
 
     @PostMapping("/save")
     public ResponseEntity<Feedback> saveFeedback(   @RequestParam("feedback")  String feedbackJson, Authentication authentication) {
-        if (feedbackJson == null || feedbackJson.trim().isEmpty()) {
-            throw new IllegalArgumentException("Feedback JSON body is required.");
-        }
+        try {
+            if (feedbackJson == null || feedbackJson.trim().isEmpty()) {
+                throw new IllegalArgumentException("Feedback JSON body is required.");
+            }
+
             Feedback savedFeedback = feedbackService.saveFeedbackForUser(feedbackJson, authentication);
             return ResponseEntity.ok(savedFeedback);
+
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Return 400 status code for bad requests
+                    .body(null);
+        }
     }
 
 
