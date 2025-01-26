@@ -8,6 +8,7 @@ class ProjectApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assert (true);
 	}
 
 }
