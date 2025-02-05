@@ -12,6 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -24,9 +27,30 @@ public class SecurityConfig {
     @Autowired
     AuthenticationProvider authenticationProvider;
 
+
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.addAllowedOrigin("http://localhost:5173");
+        corsConfig.addAllowedMethod("GET");
+        corsConfig.addAllowedMethod("POST");
+        corsConfig.addAllowedMethod("PUT");
+        corsConfig.addAllowedMethod("DELETE");
+        corsConfig.addAllowedHeader("*");
+        corsConfig.setAllowCredentials(true);
+        corsConfig.addExposedHeader("Authorization");
+        corsConfig.addExposedHeader("Content-Type");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
+        return source;
+    }
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**","/Blogs/**", "/feedback/**","/questionnaire/show","/results/**").permitAll()
                         .requestMatchers("/feedback/save").authenticated()
