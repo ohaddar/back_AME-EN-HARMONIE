@@ -32,7 +32,8 @@ public class UserServiceImpTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
-
+    @Mock
+    private LoginAttemptServiceImp loginAttemptService;
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -52,6 +53,8 @@ public class UserServiceImpTest {
     @Test
     public void registerUser_EmailAlreadyExists() {
         User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
+        when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
+
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
 
         ResponseEntity<?> response = userService.register(user);
@@ -61,6 +64,8 @@ public class UserServiceImpTest {
     @Test
     public void login_Success() {
         User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
+        when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
+
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("password123", "password123")).thenReturn(true);
         when(jwtService.generateToken(user)).thenReturn("jwt_token");
@@ -71,6 +76,8 @@ public class UserServiceImpTest {
 
     @Test
     public void login_UserNotFound() {
+        when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
+
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.empty());
 
         ResponseEntity<?> response = userService.login("john.doe@example.com", "password123");
@@ -79,8 +86,13 @@ public class UserServiceImpTest {
 
     @Test
     public void login_IncorrectPassword() {
+
+
         User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
+        when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
+
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
+
         when(passwordEncoder.matches("incorrect_password", "password123")).thenReturn(false);
 
         ResponseEntity<?> response = userService.login("john.doe@example.com", "incorrect_password");
