@@ -21,10 +21,8 @@ public class AuthControllerTest {
 
     @InjectMocks
     private AuthController authController;
-
     @Mock
     private UserService userService;
-
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
