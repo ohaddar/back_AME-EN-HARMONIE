@@ -24,7 +24,7 @@ public class BlogController {
 
 
     @PostMapping("/save")
-    public ResponseEntity<Blog> saveBlogs(@RequestParam("image") MultipartFile file, @RequestParam("blog") String blogJson, Authentication authentication) {
+    public ResponseEntity<Blog> saveBlog(@RequestParam("image") MultipartFile file, @RequestParam("blog") String blogJson, Authentication authentication) {
         try {
             Blog savedBlog = blogService.saveBlog(blogJson, file);
             return ResponseEntity.ok(savedBlog);
