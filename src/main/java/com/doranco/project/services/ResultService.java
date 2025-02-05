@@ -1,6 +1,5 @@
 package com.doranco.project.services;
 
-import com.doranco.project.entities.Questionnaire;
 import com.doranco.project.entities.Result;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;

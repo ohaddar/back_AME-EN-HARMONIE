@@ -3,15 +3,11 @@ package com.doranco.project.controllers;
 import com.doranco.project.entities.Blog;
 import com.doranco.project.enums.CategoryEnum;
 import com.doranco.project.services.BlogService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -48,18 +44,15 @@ class BlogControllerTest {
         blog.setContent("Test content");
         blog.setId(1L);
 
-        // Mock de la méthode saveBlog
         when(blogService.saveBlog(any(String.class), any())).thenReturn(blog);
 
-        // Simuler une requête multipart avec un paramètre "blog" et "image"
         mockMvc.perform(multipart("/Blogs/save")
-                        .file("image", "imageData".getBytes()) // Simuler un fichier image
+                        .file("image", "imageData".getBytes())
                         .param("blog", "{\"title\": \"Test Blog\", \"content\": \"Test content\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Test Blog"))
                 .andExpect(jsonPath("$.content").value("Test content"));
 
-        // Vérifier que la méthode saveBlog a bien été appelée
         verify(blogService, times(1)).saveBlog(any(String.class), any());
     }
 

@@ -32,6 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
+        // Extract the 'Authorization' header from the request
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             logger.info("No Authorization header or it doesn't start with 'Bearer'" + authHeader);
@@ -42,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt = authHeader.substring("Bearer ".length());
         String email;
         try {
+            // extract the username (email) from the JWT
             email = jwtService.extractUserName(jwt);
         } catch (Exception e) {
             logger.error("Failed to extract username from JWT", e);
@@ -61,6 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Load the user details using the extracted email
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         boolean isTokenValid;
         try {
@@ -80,6 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities()
         );
+        // Set the authentication in the SecurityContext
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
 

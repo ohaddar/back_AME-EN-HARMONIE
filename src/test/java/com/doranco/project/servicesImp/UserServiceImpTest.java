@@ -58,7 +58,7 @@ public class UserServiceImpTest {
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
 
         ResponseEntity<?> response = userService.register(user);
-        assertEquals(409, response.getStatusCode().value());  // Conflict
+        assertEquals(409, response.getStatusCode().value());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class UserServiceImpTest {
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.empty());
 
         ResponseEntity<?> response = userService.login("john.doe@example.com", "password123");
-        assertEquals(404, response.getStatusCode().value()); // Not Found
+        assertEquals(404, response.getStatusCode().value());
     }
 
     @Test
@@ -96,6 +96,6 @@ public class UserServiceImpTest {
         when(passwordEncoder.matches("incorrect_password", "password123")).thenReturn(false);
 
         ResponseEntity<?> response = userService.login("john.doe@example.com", "incorrect_password");
-        assertEquals(400, response.getStatusCode().value()); // Bad Request
+        assertEquals(400, response.getStatusCode().value());
     }
 }

@@ -28,18 +28,14 @@ class QuestionnaireServiceImpTest {
         MockitoAnnotations.openMocks(this);
         questionnaire = new Questionnaire();
         questionnaire.setId("1");
-        // Mock other properties like questions or results if needed
     }
 
     @Test
     void testSaveQuestionnaire() {
-        // Given
         when(questionnaireRepository.save(questionnaire)).thenReturn(questionnaire);
 
-        // When
         Questionnaire savedQuestionnaire = questionnaireServiceImp.saveQuestionnaire(questionnaire);
 
-        // Then
         assertNotNull(savedQuestionnaire);
         assertEquals("1", savedQuestionnaire.getId());
         verify(questionnaireRepository, times(1)).save(questionnaire);
@@ -47,13 +43,10 @@ class QuestionnaireServiceImpTest {
 
     @Test
     void testGetQuestionnaire() {
-        // Given
         when(questionnaireRepository.findAll()).thenReturn(List.of(questionnaire));
 
-        // When
         Questionnaire retrievedQuestionnaire = questionnaireServiceImp.getQuestionnaire();
 
-        // Then
         assertNotNull(retrievedQuestionnaire);
         assertEquals("1", retrievedQuestionnaire.getId());
         verify(questionnaireRepository, times(1)).findAll();
@@ -61,10 +54,8 @@ class QuestionnaireServiceImpTest {
 
     @Test
     void testGetQuestionnaire_Exception() {
-        // Given
         when(questionnaireRepository.findAll()).thenThrow(new RuntimeException("Database error"));
 
-        // When & Then
         Exception exception = assertThrows(RuntimeException.class, () -> {
             questionnaireServiceImp.getQuestionnaire();
         });

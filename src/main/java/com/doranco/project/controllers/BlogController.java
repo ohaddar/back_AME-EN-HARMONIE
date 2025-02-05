@@ -2,7 +2,6 @@ package com.doranco.project.controllers;
 
 import com.doranco.project.entities.Blog;
 import com.doranco.project.services.BlogService;
-import com.doranco.project.utils.FileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,7 +33,6 @@ public class BlogController {
     }
 
     @GetMapping("/{id}")
-
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Blog> getBlogById(@PathVariable Long id, Authentication authentication) {
         Optional<Blog> blogsById = blogService.getBlogById(id);

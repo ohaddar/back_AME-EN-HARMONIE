@@ -36,18 +36,14 @@ class ResultControllerTest {
         result.setId(1L);
         result.setDescription("Test result");
         result.setDatetime("2025-01-20");
-        // Add other necessary fields if needed
     }
 
     @Test
     void testSaveResult() {
-        // Given
         when(resultService.saveUserTestResult(result, authentication)).thenReturn(result);
 
-        // When
         ResponseEntity<Result> response = resultController.saveResult(result, authentication);
 
-        // Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(1L, response.getBody().getId());
@@ -55,13 +51,10 @@ class ResultControllerTest {
 
     @Test
     void testGetResultsByUserId() {
-        // Given
         when(resultService.getResultsByUserId(authentication)).thenReturn(Collections.singletonList(result));
 
-        // When
         ResponseEntity<List<Result>> response = resultController.getResultsByUserId(authentication);
 
-        // Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertFalse(response.getBody().isEmpty());

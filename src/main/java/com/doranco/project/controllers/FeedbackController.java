@@ -29,7 +29,7 @@ public class FeedbackController {
             return ResponseEntity.ok(savedFeedback);
 
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST) // Return 400 status code for bad requests
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(null);
         }
     }

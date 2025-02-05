@@ -29,7 +29,6 @@ public class BlogServiceImp implements BlogService {
             ObjectMapper objectMapper = new ObjectMapper();
             Blog blog = objectMapper.readValue(blogJson, Blog.class);
 
-            // Handle file upload in the service layer
             if (file != null && !file.isEmpty()) {
                 byte[] imageData = fileUpload.uploadFile(file);
                 blog.setImage(imageData);
@@ -80,12 +79,10 @@ public class BlogServiceImp implements BlogService {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Blog updatedBlog = objectMapper.readValue(blogJson, Blog.class);
 
-                // Update fields if provided
                 if (updatedBlog.getTitle() != null) existingBlog.setTitle(updatedBlog.getTitle());
                 if (updatedBlog.getContent() != null) existingBlog.setContent(updatedBlog.getContent());
                 if (updatedBlog.getCategory() != null) existingBlog.setCategory(updatedBlog.getCategory());
 
-                // Handle file upload if present
                 if (file != null && !file.isEmpty()) {
                     byte[] imageData = fileUpload.uploadFile(file);
                     existingBlog.setImage(imageData);
@@ -113,7 +110,7 @@ public class BlogServiceImp implements BlogService {
     @Override
     public List<Blog> getBlogsByCategory(String category) {
         try {
-            CategoryEnum categoryEnum = CategoryEnum.valueOf(category.toUpperCase()); // Convert input to enum
+            CategoryEnum categoryEnum = CategoryEnum.valueOf(category.toUpperCase());
               List<Blog> blogs =  blogRepository.findByCategory(categoryEnum);
             for (Blog blog : blogs) {
                 blog.setImageUrl("http://localhost:8080/Blogs/image/" + blog.getId());

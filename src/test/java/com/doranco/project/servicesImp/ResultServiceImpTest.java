@@ -52,40 +52,34 @@ class ResultServiceImpTest {
 
     @Test
     void testSaveUserTestResult() {
-        // Given
+
         when(authentication.getName()).thenReturn("test@example.com");
         when(userRepository.findByEmail("test@example.com")).thenReturn(java.util.Optional.of(user));
 
-        // Print the result before save
         System.out.println("Result before saving: " + result);
 
-        // Use any(Result.class) for argument matching instead of the exact object
         when(resultRepository.save(any(Result.class))).thenReturn(result);
 
-        // When
         Result savedResult = resultServiceImp.saveUserTestResult(result, authentication);
 
-        // Then
-        System.out.println("Saved result: " + savedResult);  // Debug print
+        System.out.println("Saved result: " + savedResult);
 
-        assertNotNull(savedResult);  // Should not be null
-        Assertions.assertEquals(1L, savedResult.getId());  // Ensure ID is set correctly
+        assertNotNull(savedResult);
+        Assertions.assertEquals(1L, savedResult.getId());
         Assertions.assertEquals("Test result", savedResult.getDescription());
-        verify(resultRepository, times(1)).save(any(Result.class));  // Verify save is called with any Result
+        verify(resultRepository, times(1)).save(any(Result.class));
     }
 
 
 
     @Test
     void testGetResultsByUserId() {
-        // Given
+
         when(authentication.getPrincipal()).thenReturn(user);
         when(resultRepository.getResultsByUserId(user.getId())).thenReturn(Collections.singletonList(result));
 
-        // When
         var results = resultServiceImp.getResultsByUserId(authentication);
 
-        // Then
         assertNotNull(results);
         Assertions.assertFalse(results.isEmpty());
         Assertions.assertEquals(1L, results.get(0).getId());
@@ -94,10 +88,9 @@ class ResultServiceImpTest {
 
     @Test
     void testGetResultsByUserId_UserNotAuthenticated() {
-        // Given
+
         when(authentication.getPrincipal()).thenReturn(null);
 
-        // When & Then
         Exception exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             resultServiceImp.getResultsByUserId(authentication);
         });
@@ -107,11 +100,10 @@ class ResultServiceImpTest {
 
     @Test
     void testSaveUserTestResult_UserNotFound() {
-        // Given
+
         when(authentication.getName()).thenReturn("nonexistent@example.com");
         when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(java.util.Optional.empty());
 
-        // When & Then
         Exception exception = Assertions.assertThrows(RuntimeException.class, () -> {
             resultServiceImp.saveUserTestResult(result, authentication);
         });

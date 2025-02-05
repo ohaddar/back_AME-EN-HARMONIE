@@ -13,6 +13,13 @@ public class LoginAttemptServiceImp implements LoginAttemptService {
     private final Map<String, Integer> attemptsCache = new HashMap<>();
     private final Map<String, Long> lockTimeCache = new HashMap<>();
 
+    /**
+     * Called when a login attempt fails.
+     * Increments the failed attempt count and locks the account if the limit is reached.
+     *
+     * @param email The email of the user attempting to log in.
+     */
+
     public void loginFailed(String email) {
         try {
             Thread.sleep(2000);
@@ -26,6 +33,14 @@ public class LoginAttemptServiceImp implements LoginAttemptService {
             lockTimeCache.put(email, System.currentTimeMillis());
         }
     }
+
+    /**
+     * Checks if a user is blocked due to too many failed login attempts.
+     * If the lock duration has passed, the lock is removed.
+     *
+     * @param email The email of the user.
+     * @return true if the user is currently blocked, false otherwise.
+     */
 
     public boolean isBlocked(String email) {
         if (!lockTimeCache.containsKey(email)) {

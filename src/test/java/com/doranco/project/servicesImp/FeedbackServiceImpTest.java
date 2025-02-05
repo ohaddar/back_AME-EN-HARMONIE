@@ -40,10 +40,9 @@ public class FeedbackServiceImpTest {
 
     @Test
     public void testSaveFeedbackForUser_Success() {
-        // Given JSON feedback input
+
         String feedbackJson = "{\"title\": \"Test Feedback\", \"content\": \"This is a feedback.\"}";
 
-        // Set up expected Feedback object
         Feedback feedback = new Feedback();
         feedback.setId(1L);
         feedback.setTitle("Test Feedback");
@@ -55,12 +54,10 @@ public class FeedbackServiceImpTest {
         User user = new User(3L, "John", "DeFee", email, "avatar.png", password, RoleEnum.USER);
         feedback.setUser(user);
 
-        // Mock authentication to return the expected user
         when(mockAuth.getPrincipal()).thenReturn(user);
 
         when(feedbackRepository.save(any(Feedback.class))).thenReturn(feedback);
 
-        // Call the method in the service
         Feedback result = feedbackService.saveFeedbackForUser(feedbackJson, mockAuth);
 
         assertNotNull(result, "The result should not be null");
@@ -126,7 +123,7 @@ public class FeedbackServiceImpTest {
         List<Feedback> result = feedbackService.getPublicFeedbacks();
 
         assertNotNull(result);
-        assertEquals(2, result.size()); // In case of only 2, they should be returned.
+        assertEquals(2, result.size());
     }
 
     @Test

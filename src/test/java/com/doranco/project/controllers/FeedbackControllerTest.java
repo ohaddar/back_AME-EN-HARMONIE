@@ -53,17 +53,15 @@ public class FeedbackControllerTest {
         feedback.setPublicationDate(null);
         feedback.setUser(user);
 
-        // Mock the feedbackService.saveFeedbackForUser method
         when(feedbackService.saveFeedbackForUser(any(String.class), any())).thenReturn(feedback);
 
-        // Perform the POST request to /feedback/save
         mockMvc.perform(post("/feedback/save")
                         .param("feedback", "{\"title\": \"Test Title\", \"content\": \"Test Content\"}")
-                        .header("Authorization", "Bearer someToken") // Assuming the mock user is authenticated
+                        .header("Authorization", "Bearer someToken")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()) // Expect HTTP 200 status
-                .andExpect(jsonPath("$.title").value("Test Title")) // Check the title in the response
-                .andExpect(jsonPath("$.content").value("Test Content")); // Check the content in the response
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Test Title"))
+                .andExpect(jsonPath("$.content").value("Test Content"));
     }
 
     @Test
@@ -146,7 +144,7 @@ public class FeedbackControllerTest {
                         .param("feedback", "")
                         .header("Authorization", "Bearer someToken")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest()) ; // Expect 400 Bad Request status
+                .andExpect(status().isBadRequest()) ;
     }
 
 }

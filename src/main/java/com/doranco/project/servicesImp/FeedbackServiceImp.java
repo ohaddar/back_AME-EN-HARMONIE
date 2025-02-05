@@ -6,7 +6,6 @@ import com.doranco.project.repositories.IFeedbackRepository;
 import com.doranco.project.repositories.IUserRepository;
 import com.doranco.project.services.FeedbackService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 

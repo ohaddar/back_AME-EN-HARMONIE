@@ -28,18 +28,14 @@ class QuestionnaireControllerTest {
         MockitoAnnotations.openMocks(this);
         questionnaire = new Questionnaire();
         questionnaire.setId("1");
-        // You can also mock the list of questions and results if needed
     }
 
     @Test
     void testSaveQuestionnaire() {
-        // Given
         when(questionnaireService.saveQuestionnaire(questionnaire)).thenReturn(questionnaire);
 
-        // When
         ResponseEntity<Questionnaire> response = questionnaireController.saveQuestionnaire(questionnaire);
 
-        // Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("1", response.getBody().getId());
@@ -47,13 +43,10 @@ class QuestionnaireControllerTest {
 
     @Test
     void testGetQuestionnaire() {
-        // Given
         when(questionnaireService.getQuestionnaire()).thenReturn(questionnaire);
 
-        // When
         ResponseEntity<Questionnaire> response = questionnaireController.getQuestionnaire();
 
-        // Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("1", response.getBody().getId());
