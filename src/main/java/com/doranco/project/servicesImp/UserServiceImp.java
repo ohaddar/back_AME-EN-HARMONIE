@@ -20,15 +20,19 @@ import java.util.Optional;
 public class UserServiceImp implements UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
- @Autowired
- IUserRepository userRepository;
+    @Autowired
+    IUserRepository userRepository;
     @Autowired
     JwtService jwtService;
+    @Autowired
+    LoginAttemptServiceImp loginAttemptService;
     @Override
     public ResponseEntity<?> register(User user) {
         if (user.getPassword() == null || user.getEmail() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+
+
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
         }
@@ -51,15 +55,23 @@ public class UserServiceImp implements UserService {
         if (email == null || password == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email or password is missing");
         }
+        if (loginAttemptService.isBlocked(email)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body("Too many failed attempts. Please try again later.");
+        }
         Optional<User> loggedInUser = userRepository.findByEmail(email);
         if (loggedInUser.isEmpty()) {
+            loginAttemptService.loginFailed(email);
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         User user = loggedInUser.get();
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
+            loginAttemptService.loginFailed(email);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect password");
         }
+        loginAttemptService.loginSucceeded(email);
         String jwt = jwtService.generateToken(user);
         Map<String ,Object> response = new HashMap<>();
         response.put("id", user.getId());
