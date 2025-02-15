@@ -1,7 +1,7 @@
 package com.doranco.project.controllers;
 
-import com.doranco.project.entities.Feedback;
-import com.doranco.project.entities.User;
+import com.doranco.project.dto.FeedbackDTO;
+import com.doranco.project.dto.UserDTO;
 import com.doranco.project.enums.RoleEnum;
 import com.doranco.project.services.FeedbackService;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,10 +42,8 @@ public class FeedbackControllerTest {
 
     @Test
     void testSaveFeedback() throws Exception {
-        Feedback feedback = new Feedback();
-        String email = "john.defee@example.com";
-        String password = "password123";
-        User user = new User(3L, "John", "DeFee", email, "avatar.png", password, RoleEnum.USER);
+        FeedbackDTO feedback = new FeedbackDTO();
+        UserDTO user = new UserDTO(3L, "John", "DeFee", "avatar.png", RoleEnum.USER, "john.defee@example.com");
 
         feedback.setTitle("Test Title");
         feedback.setId(1L);
@@ -66,15 +64,15 @@ public class FeedbackControllerTest {
 
     @Test
     void testGetFeedbacks() throws Exception {
-        Feedback feedback1 = new Feedback();
+        FeedbackDTO feedback1 = new FeedbackDTO();
         feedback1.setTitle("Title 1");
         feedback1.setContent("Content 1");
 
-        Feedback feedback2 = new Feedback();
+        FeedbackDTO feedback2 = new FeedbackDTO();
         feedback2.setTitle("Title 2");
         feedback2.setContent("Content 2");
 
-        List<Feedback> feedbacks = Arrays.asList(feedback1, feedback2);
+        List<FeedbackDTO> feedbacks = Arrays.asList(feedback1, feedback2);
 
         when(feedbackService.getAllFeedbacks()).thenReturn(feedbacks);
 
@@ -86,7 +84,7 @@ public class FeedbackControllerTest {
     }
     @Test
     void testGetFeedbackById() throws Exception {
-        Feedback feedback = new Feedback();
+        FeedbackDTO feedback = new FeedbackDTO();
         feedback.setId(1L);
         feedback.setTitle("Test Title");
         feedback.setContent("Test Content");
@@ -101,15 +99,14 @@ public class FeedbackControllerTest {
     }
     @Test
     void testGetFeedbackByUserId() throws Exception {
-        String email = "john.defee@example.com";
-        String password = "password123";
-        User user = new User(3L, "John", "DeFee", email, "avatar.png", password, RoleEnum.USER);
+        UserDTO user = new UserDTO(3L, "John", "DeFee","avatar.png", RoleEnum.USER, "john.defee@example.com" );
 
-        Feedback feedback = new Feedback();
+        FeedbackDTO feedback = new FeedbackDTO();
         feedback.setId(1L);
         feedback.setTitle("User Feedback");
         feedback.setContent("Content by John");
         feedback.setUser(user);
+
 
         when(feedbackService.getFeedbackByUserId(any())).thenReturn(feedback);
 
@@ -121,15 +118,15 @@ public class FeedbackControllerTest {
     }
     @Test
     void testGetPublicFeedbacks() throws Exception {
-        Feedback feedback1 = new Feedback();
+        FeedbackDTO feedback1 = new FeedbackDTO();
         feedback1.setTitle("Public Feedback 1");
         feedback1.setContent("Public Content 1");
 
-        Feedback feedback2 = new Feedback();
+        FeedbackDTO feedback2 = new FeedbackDTO();
         feedback2.setTitle("Public Feedback 2");
         feedback2.setContent("Public Content 2");
 
-        List<Feedback> feedbacks = Arrays.asList(feedback1, feedback2);
+        List<FeedbackDTO> feedbacks = Arrays.asList(feedback1, feedback2);
 
         when(feedbackService.getPublicFeedbacks()).thenReturn(feedbacks);
 

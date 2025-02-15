@@ -1,5 +1,7 @@
 package com.doranco.project.servicesImp;
 
+import com.doranco.project.dto.FeedbackDTO;
+import com.doranco.project.dto.UserDTO;
 import com.doranco.project.entities.Feedback;
 import com.doranco.project.entities.User;
 import com.doranco.project.enums.RoleEnum;
@@ -13,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,41 +29,50 @@ public class FeedbackServiceImpTest {
 
     @Mock
     private IUserRepository userRepository;
-
+    @Mock
+    private Authentication authentication;
     @InjectMocks
     private FeedbackServiceImp feedbackService;
 
     private Authentication mockAuth;
-
+    private User user;
+    private Feedback feedback;
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         mockAuth = mock(Authentication.class);
+        user = new User();
+        user.setId(1L);
+        user.setFirstname("John");
+        user.setLastname("DeFee");
+        user.setAvatar("avatar.png");
+        user.setRole(RoleEnum.USER);
+        user.setEmail("john.defee@example.com");
+
+        feedback = new Feedback();
+        feedback.setId(1L);
+        feedback.setTitle("Test Feedback");
+        feedback.setContent("This is a feedback.");
+        feedback.setPublicationDate(new Date());
+        feedback.setUser(user);
     }
 
     @Test
     public void testSaveFeedbackForUser_Success() {
 
         String feedbackJson = "{\"title\": \"Test Feedback\", \"content\": \"This is a feedback.\"}";
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(feedbackRepository.save(any(Feedback.class))).thenAnswer(invocation -> {
+            Feedback savedFeedback = invocation.getArgument(0);
+            savedFeedback.setId(1L);
+            return savedFeedback;
+        });
 
-        Feedback feedback = new Feedback();
-        feedback.setId(1L);
-        feedback.setTitle("Test Feedback");
-        feedback.setContent("This is a feedback.");
-        feedback.setPublicationDate(new java.util.Date());
-
-        String email = "john.defee@example.com";
-        String password = "password123";
-        User user = new User(3L, "John", "DeFee", email, "avatar.png", password, RoleEnum.USER);
-        feedback.setUser(user);
-
-        when(mockAuth.getPrincipal()).thenReturn(user);
-
-        when(feedbackRepository.save(any(Feedback.class))).thenReturn(feedback);
-
-        Feedback result = feedbackService.saveFeedbackForUser(feedbackJson, mockAuth);
+        FeedbackDTO result = feedbackService.saveFeedbackForUser(feedbackJson, authentication);
 
         assertNotNull(result, "The result should not be null");
+        assertEquals("Test Feedback", result.getTitle());
+        assertEquals("This is a feedback.", result.getContent());
     }
 
 
@@ -69,14 +81,16 @@ public class FeedbackServiceImpTest {
         Feedback feedback1 = new Feedback();
         feedback1.setId(1L);
         feedback1.setTitle("Feedback 1");
+        feedback1.setUser(user);
 
         Feedback feedback2 = new Feedback();
         feedback2.setId(2L);
         feedback2.setTitle("Feedback 2");
+        feedback2.setUser(user);
 
         when(feedbackRepository.findAll()).thenReturn(List.of(feedback1, feedback2));
 
-        List<Feedback> feedbacks = feedbackService.getAllFeedbacks();
+        List<FeedbackDTO> feedbacks = feedbackService.getAllFeedbacks();
 
         assertNotNull(feedbacks);
         assertEquals(2, feedbacks.size());
@@ -84,17 +98,17 @@ public class FeedbackServiceImpTest {
 
     @Test
     public void testGetFeedbackById_Success() {
-        Feedback feedback = new Feedback();
-        feedback.setId(1L);
-        feedback.setTitle("Test Feedback");
-
         when(feedbackRepository.findById(1L)).thenReturn(Optional.of(feedback));
 
-        Optional<Feedback> result = feedbackService.getFeedbackById(1L);
+        Optional<FeedbackDTO> result = feedbackService.getFeedbackById(1L);
 
         assertTrue(result.isPresent());
-        assertEquals(feedback, result.get());
+        assertEquals(feedback.getId(), result.get().getId());
+        assertEquals(feedback.getTitle(), result.get().getTitle());
+        assertEquals(feedback.getContent(), result.get().getContent());
+        assertEquals(feedback.getUser().getId(), result.get().getUser().getId());
     }
+
 
     @Test
     public void testGetFeedbackById_NotFound() {
@@ -113,14 +127,15 @@ public class FeedbackServiceImpTest {
         Feedback feedback1 = new Feedback();
         feedback1.setId(1L);
         feedback1.setTitle("Public Feedback 1");
-
+        feedback1.setUser(user);
         Feedback feedback2 = new Feedback();
         feedback2.setId(2L);
         feedback2.setTitle("Public Feedback 2");
+        feedback2.setUser(user);
 
         when(feedbackRepository.findAll()).thenReturn(List.of(feedback1, feedback2));
 
-        List<Feedback> result = feedbackService.getPublicFeedbacks();
+        List<FeedbackDTO> result = feedbackService.getPublicFeedbacks();
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -128,32 +143,24 @@ public class FeedbackServiceImpTest {
 
     @Test
     public void testGetFeedbackByUserId_Success() {
-        User user = new User();
-        user.setId(1L);
-
-        Feedback feedback = new Feedback();
-        feedback.setUser(user);
-        feedback.setId(1L);
-
-        when(mockAuth.getPrincipal()).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(user);
         when(feedbackRepository.findFeedbackByUserId(1L)).thenReturn(Optional.of(feedback));
 
-        Feedback result = feedbackService.getFeedbackByUserId(mockAuth);
+        FeedbackDTO result = feedbackService.getFeedbackByUserId(authentication);
 
         assertNotNull(result);
-        assertEquals(feedback, result);
+        assertEquals("Test Feedback", result.getTitle());
     }
 
     @Test
     public void testGetFeedbackByUserId_NotFound() {
-        User user = new User();
-        user.setId(1L);
-
-        when(mockAuth.getPrincipal()).thenReturn(user);
+        when(authentication.getPrincipal()).thenReturn(user);
         when(feedbackRepository.findFeedbackByUserId(1L)).thenReturn(Optional.empty());
 
-        Feedback result = feedbackService.getFeedbackByUserId(mockAuth);
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            feedbackService.getFeedbackByUserId(authentication);
+        });
+        assertEquals("Error occurred while fetching user feedback.", exception.getMessage());
 
-        assertNull(result);
     }
 }

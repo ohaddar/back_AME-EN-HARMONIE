@@ -1,5 +1,6 @@
 package com.doranco.project.controllers;
 
+import com.doranco.project.dto.FeedbackDTO;
 import com.doranco.project.entities.Feedback;
 import com.doranco.project.services.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,13 @@ public class FeedbackController {
     FeedbackService feedbackService;
 
     @PostMapping("/save")
-    public ResponseEntity<Feedback> saveFeedback(   @RequestParam("feedback")  String feedbackJson, Authentication authentication) {
+    public ResponseEntity<FeedbackDTO> saveFeedback(   @RequestParam("feedback")  String feedbackJson, Authentication authentication) {
         try {
             if (feedbackJson == null || feedbackJson.trim().isEmpty()) {
                 throw new IllegalArgumentException("Feedback JSON body is required.");
             }
 
-            Feedback savedFeedback = feedbackService.saveFeedbackForUser(feedbackJson, authentication);
+            FeedbackDTO savedFeedback = feedbackService.saveFeedbackForUser(feedbackJson, authentication);
             return ResponseEntity.ok(savedFeedback);
 
         } catch (IllegalArgumentException ex) {
@@ -37,36 +38,33 @@ public class FeedbackController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<Feedback>> getFeedbacks() {
-        List<Feedback> listOfAllFeedbacks = feedbackService.getAllFeedbacks();
+    public ResponseEntity<List<FeedbackDTO>> getFeedbacks() {
+        List<FeedbackDTO> listOfAllFeedbacks = feedbackService.getAllFeedbacks();
         return ResponseEntity.ok(listOfAllFeedbacks);
     }
 
     @GetMapping("/public")
-    public ResponseEntity<List<Feedback>> getPublicFeedbacks() {
-        List<Feedback> limitedFeedbacks = feedbackService.getPublicFeedbacks();
+    public ResponseEntity<List<FeedbackDTO>> getPublicFeedbacks() {
+        List<FeedbackDTO> limitedFeedbacks = feedbackService.getPublicFeedbacks();
         return ResponseEntity.ok(limitedFeedbacks);
     }
 
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Optional<Feedback>>getFeedbackById(@PathVariable Long id, Authentication authentication) {
-        Optional<Feedback> feedbacksById = feedbackService.getFeedbackById(id);
+    public ResponseEntity<Optional<FeedbackDTO>>getFeedbackById(@PathVariable Long id, Authentication authentication) {
+        Optional<FeedbackDTO> feedbacksById = feedbackService.getFeedbackById(id);
             return ResponseEntity.ok(feedbacksById);
     }
     @GetMapping("/user")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Feedback> getFeedbackByUserId(Authentication authentication) {
+    public ResponseEntity<FeedbackDTO> getFeedbackByUserId(Authentication authentication) {
 
-            Feedback feedback = feedbackService.getFeedbackByUserId(authentication);
+        FeedbackDTO feedback = feedbackService.getFeedbackByUserId(authentication);
 
             return ResponseEntity.ok(feedback);
 
     }
-
-
-
 
 
 }
