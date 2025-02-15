@@ -26,7 +26,7 @@ public class QuestionnaireServiceImp implements QuestionnaireService {
                 try{
                     return questionnaireRepository.findAll().getFirst();
                 }catch (Exception e) {
-                    throw new RuntimeException("Error occurred while fetching public feedbacks.", e);
+                    throw new RuntimeException("Error occurred while fetching questionnaire.", e);
                 }
     }
 }

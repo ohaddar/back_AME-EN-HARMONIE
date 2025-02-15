@@ -59,6 +59,6 @@ class QuestionnaireServiceImpTest {
         Exception exception = assertThrows(RuntimeException.class, () -> {
             questionnaireServiceImp.getQuestionnaire();
         });
-        assertEquals("Error occurred while fetching public feedbacks.", exception.getMessage());
+        assertEquals("Error occurred while fetching questionnaire.", exception.getMessage());
     }
 }
