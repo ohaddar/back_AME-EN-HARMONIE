@@ -1,6 +1,5 @@
 package com.doranco.project.controllers;
-
-import com.doranco.project.entities.Result;
+import com.doranco.project.dto.ResultDto;
 import com.doranco.project.services.ResultService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,12 +26,12 @@ class ResultControllerTest {
     @InjectMocks
     private ResultController resultController;
 
-    private Result result;
+    private ResultDto result;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        result = new Result();
+        result = new ResultDto();
         result.setId(1L);
         result.setDescription("Test result");
         result.setDatetime("2025-01-20");
@@ -42,7 +41,7 @@ class ResultControllerTest {
     void testSaveResult() {
         when(resultService.saveUserTestResult(result, authentication)).thenReturn(result);
 
-        ResponseEntity<Result> response = resultController.saveResult(result, authentication);
+        ResponseEntity<ResultDto> response = resultController.saveResult(result, authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -53,7 +52,7 @@ class ResultControllerTest {
     void testGetResultsByUserId() {
         when(resultService.getResultsByUserId(authentication)).thenReturn(Collections.singletonList(result));
 
-        ResponseEntity<List<Result>> response = resultController.getResultsByUserId(authentication);
+        ResponseEntity<List<ResultDto>> response = resultController.getResultsByUserId(authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

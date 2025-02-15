@@ -1,7 +1,10 @@
 package com.doranco.project.servicesImp;
 
+import com.doranco.project.dto.ResultDto;
+import com.doranco.project.dto.UserDTO;
 import com.doranco.project.entities.Result;
 import com.doranco.project.entities.User;
+import com.doranco.project.enums.RoleEnum;
 import com.doranco.project.repositories.IResultRepository;
 import com.doranco.project.repositories.IUserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -31,23 +34,27 @@ class ResultServiceImpTest {
     @InjectMocks
     private ResultServiceImp resultServiceImp;
 
-    private Result result;
+    private ResultDto result;
     private User user;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-
         user = new User();
         user.setId(1L);
-        user.setEmail("test@example.com");
+        user.setFirstname("John");
+        user.setLastname("DeFee");
+        user.setAvatar("avatar.png");
+        user.setRole(RoleEnum.USER);
+        user.setEmail("email@hell.com");
+        result = new ResultDto(
+                1L,
+                "Test result",
+                "2025-01-20",
+                new UserDTO(user.getId(), user.getFirstname(), user.getLastname(), user.getAvatar(), user.getRole(), user.getUsername()),
+                "Q1"
+        );
 
-        result = new Result();
-        result.setId(1L);
-        result.setDescription("Test result");
-        result.setDatetime("2025-01-20");
-        result.setUser(user);
-        result.setQuestionnaireId("Q1");
     }
 
     @Test
@@ -55,12 +62,22 @@ class ResultServiceImpTest {
 
         when(authentication.getName()).thenReturn("test@example.com");
         when(userRepository.findByEmail("test@example.com")).thenReturn(java.util.Optional.of(user));
-
+        ResultDto resultDto = new ResultDto(
+                null,
+                "Test result",
+                "2024-02-15T12:00:00",
+                new UserDTO(user.getId(), user.getFirstname(), user.getLastname(), user.getAvatar(), user.getRole(),user.getUsername()),
+                "12345"
+        );
         System.out.println("Result before saving: " + result);
+        when(resultRepository.save(any(Result.class))).thenAnswer(invocation -> {
+            Result savedResult = invocation.getArgument(0);
+            savedResult.setId(1L);
+            return savedResult;
+        });
+        ResultDto savedResult = resultServiceImp.saveUserTestResult(resultDto, authentication);
 
-        when(resultRepository.save(any(Result.class))).thenReturn(result);
 
-        Result savedResult = resultServiceImp.saveUserTestResult(result, authentication);
 
         System.out.println("Saved result: " + savedResult);
 
@@ -76,13 +93,14 @@ class ResultServiceImpTest {
     void testGetResultsByUserId() {
 
         when(authentication.getPrincipal()).thenReturn(user);
-        when(resultRepository.getResultsByUserId(user.getId())).thenReturn(Collections.singletonList(result));
-
+        when(resultRepository.getResultsByUserId(user.getId())).thenReturn(Collections.singletonList(new Result(
+                1L, "Test result", "2025-01-20", user, "Q1"
+        )));
         var results = resultServiceImp.getResultsByUserId(authentication);
 
         assertNotNull(results);
         Assertions.assertFalse(results.isEmpty());
-        Assertions.assertEquals(1L, results.get(0).getId());
+        Assertions.assertEquals(1L, results.getFirst().getId());
         verify(resultRepository, times(1)).getResultsByUserId(user.getId());
     }
 
