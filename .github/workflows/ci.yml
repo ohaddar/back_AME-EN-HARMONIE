@@ -24,6 +24,9 @@ jobs:
       - name: Set environment variable for test profile
         run: echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
 
+      - name: Set environment variable from secret
+        run: echo "JWT_SECRET=${{ secrets.JWT_SECRET}}" >> $GITHUB_ENV
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
