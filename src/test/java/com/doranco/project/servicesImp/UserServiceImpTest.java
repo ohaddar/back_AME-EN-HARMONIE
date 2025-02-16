@@ -12,11 +12,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserServiceImpTest {
@@ -34,6 +35,7 @@ public class UserServiceImpTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private LoginAttemptServiceImp loginAttemptService;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -41,61 +43,72 @@ public class UserServiceImpTest {
 
     @Test
     public void registerUser_Success() {
-        User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
-        when(userRepository.findByEmail("john.doe@example.com")).thenAnswer(invocation -> Optional.empty());
-        when(passwordEncoder.encode("password123")).thenReturn("encoded_password");
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        Map<String, String> request = new HashMap<>();
+        request.put("firstname", "John");
+        request.put("lastname", "Doe");
+        request.put("email", "john.doe@example.com");
+        request.put("avatar", "avatar.png");
+        request.put("password", "password123");
 
-        ResponseEntity<?> response = userService.register(user);
+        when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.empty());
+        when(passwordEncoder.encode("password123")).thenReturn("encoded_password");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ResponseEntity<?> response = userService.register(request);
         assertEquals(200, response.getStatusCode().value());
     }
 
     @Test
     public void registerUser_EmailAlreadyExists() {
-        User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
-        when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
+        Map<String, String> request = new HashMap<>();
+        request.put("email", "john.doe@example.com");
 
-        when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
+        User existingUser = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
+        when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(existingUser));
 
-        ResponseEntity<?> response = userService.register(user);
-        assertEquals(409, response.getStatusCode().value());
+        ResponseEntity<?> response = userService.register(request);
+        assertEquals(400, response.getStatusCode().value());
     }
 
     @Test
     public void login_Success() {
+        Map<String, String> request = new HashMap<>();
+        request.put("email", "john.doe@example.com");
+        request.put("password", "password123");
+
         User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
         when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
-
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("password123", "password123")).thenReturn(true);
         when(jwtService.generateToken(user)).thenReturn("jwt_token");
 
-        ResponseEntity<?> response = userService.login("john.doe@example.com", "password123");
+        ResponseEntity<?> response = userService.login(request);
         assertEquals(200, response.getStatusCode().value());
     }
 
     @Test
     public void login_UserNotFound() {
-        when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
+        Map<String, String> request = new HashMap<>();
+        request.put("email", "john.doe@example.com");
+        request.put("password", "password123");
 
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = userService.login("john.doe@example.com", "password123");
+        ResponseEntity<?> response = userService.login(request);
         assertEquals(404, response.getStatusCode().value());
     }
 
     @Test
     public void login_IncorrectPassword() {
-
+        Map<String, String> request = new HashMap<>();
+        request.put("email", "john.doe@example.com");
+        request.put("password", "incorrect_password");
 
         User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
-        when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
-
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
-
         when(passwordEncoder.matches("incorrect_password", "password123")).thenReturn(false);
 
-        ResponseEntity<?> response = userService.login("john.doe@example.com", "incorrect_password");
+        ResponseEntity<?> response = userService.login(request);
         assertEquals(400, response.getStatusCode().value());
     }
 }

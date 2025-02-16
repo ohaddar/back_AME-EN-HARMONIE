@@ -1,7 +1,5 @@
 package com.doranco.project.controllers;
 
-import com.doranco.project.entities.User;
-import com.doranco.project.enums.RoleEnum;
 import com.doranco.project.services.UserService;
 import com.doranco.project.servicesImp.LoginAttemptServiceImp;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,12 +23,16 @@ public class AuthControllerTest {
 
     @InjectMocks
     private AuthController authController;
+
     @Mock
     private UserService userService;
+
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
+
     @Mock
     private LoginAttemptServiceImp loginAttemptService;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -37,42 +42,47 @@ public class AuthControllerTest {
 
     @Test
     public void registerUser_Success() throws Exception {
-        User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
+        Map<String, String> request = new HashMap<>();
+        request.put("firstname", "John");
+        request.put("lastname", "Doe");
+        request.put("email", "john.doe@example.com");
+        request.put("avatar", "avatar.png");
+        request.put("password", "password123");
 
-        when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
-        when(userService.register(user)).thenAnswer(invocation -> ResponseEntity.ok(user));
+        when(userService.register(request)).thenAnswer(invocation -> ResponseEntity.ok(request));
 
         mockMvc.perform(post("/auth/register")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(user)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void login_Success() throws Exception {
-        String email = "john.doe@example.com";
-        String password = "password123";
-        User user = new User(1L, "John", "Doe", email, "avatar.png", password, RoleEnum.USER);
-        when(loginAttemptService.isBlocked(email)).thenReturn(false);
+        Map<String, String> request = new HashMap<>();
+        request.put("email", "john.doe@example.com");
+        request.put("password", "password123");
 
-        when(userService.login(email, password)).thenAnswer(invocation ->  ResponseEntity.ok("login_success"));
+        when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
+        when(userService.login(request)).thenAnswer(invocation -> ResponseEntity.ok("login_success"));
 
         mockMvc.perform(post("/auth/login")
                         .contentType("application/json")
-                        .content("{\"email\":\"john.doe@example.com\",\"password\":\"password123\"}"))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void login_Failure_UserNotFound() throws Exception {
-        String email = "non.existent@example.com";
-        String password = "password123";
+        Map<String, String> request = new HashMap<>();
+        request.put("email", "non.existent@example.com");
+        request.put("password", "password123");
 
-        when(userService.login(email, password)).thenAnswer(invocation ->  ResponseEntity.status(404).body("User not found"));
+        when(userService.login(request)).thenAnswer(invocation -> ResponseEntity.status(404).body("User not found"));
 
         mockMvc.perform(post("/auth/login")
                         .contentType("application/json")
-                        .content("{\"email\":\"non.existent@example.com\",\"password\":\"password123\"}"))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
     }
 }
