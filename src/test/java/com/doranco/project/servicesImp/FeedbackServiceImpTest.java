@@ -123,25 +123,6 @@ public class FeedbackServiceImpTest {
     }
 
     @Test
-    public void testGetPublicFeedbacks() {
-        Feedback feedback1 = new Feedback();
-        feedback1.setId(1L);
-        feedback1.setTitle("Public Feedback 1");
-        feedback1.setUser(user);
-        Feedback feedback2 = new Feedback();
-        feedback2.setId(2L);
-        feedback2.setTitle("Public Feedback 2");
-        feedback2.setUser(user);
-
-        when(feedbackRepository.findAll()).thenReturn(List.of(feedback1, feedback2));
-
-        List<FeedbackDTO> result = feedbackService.getPublicFeedbacks();
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-    }
-
-    @Test
     public void testGetFeedbackByUserId_Success() {
         when(authentication.getPrincipal()).thenReturn(user);
         when(feedbackRepository.findFeedbackByUserId(1L)).thenReturn(Optional.of(feedback));

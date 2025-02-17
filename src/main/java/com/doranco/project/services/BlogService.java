@@ -13,6 +13,5 @@ public interface BlogService {
     List<Blog> getAllBlogs() ;
     void deleteBlogById(Long id);
     Blog updateBlogById(Long id, String blogJson, MultipartFile file);
-    List<Blog> getPublicBlogs();
     List<Blog> getBlogsByCategory(String category);
 }

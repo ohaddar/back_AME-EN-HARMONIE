@@ -12,7 +12,6 @@ public interface FeedbackService {
 
     List<FeedbackDTO> getAllFeedbacks();
 
-    List<FeedbackDTO> getPublicFeedbacks();
 
     Optional<FeedbackDTO> getFeedbackById(Long id);
 

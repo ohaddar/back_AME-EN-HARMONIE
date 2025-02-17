@@ -138,30 +138,4 @@ public class FeedbackServiceImp implements FeedbackService {
         }
     }
 
-    @Override
-    public List<FeedbackDTO> getPublicFeedbacks() {
-        try {
-            List<Feedback> allFeedbacks = feedbackRepository.findAll();
-            List<Feedback> limitedFeedbacks =  allFeedbacks.size() > 2 ? allFeedbacks.subList(0, 2) : allFeedbacks;
-            return limitedFeedbacks.stream()
-                    .map(feedback -> new FeedbackDTO(
-                            feedback.getId(),
-                            feedback.getTitle(),
-                            feedback.getContent(),
-                            feedback.getPublicationDate(),
-                            new UserDTO(
-                                    feedback.getUser().getId(),
-                                    feedback.getUser().getFirstname(),
-                                    feedback.getUser().getLastname(),
-                                    feedback.getUser().getAvatar(),
-                                    feedback.getUser().getRole(),
-                                    feedback.getUser().getUsername()
-                            )
-                    ))
-                    .collect(Collectors.toList());
-        }catch (Exception e) {
-            throw new RuntimeException("Error occurred while fetching public feedbacks.", e);
-        }
-    }
-
 }

@@ -40,17 +40,11 @@ public class BlogController {
     }
 
     @GetMapping("/blogs")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<Blog>> getAllBlogs( Authentication authentication) {
+    public ResponseEntity<List<Blog>> getAllBlogs() {
 
         List<Blog> blogs = blogService.getAllBlogs();
         return ResponseEntity.ok(blogs);
 
-    }
-    @GetMapping("/public")
-    public ResponseEntity<List<Blog>> getPublicBlogs() {
-        List<Blog> limitedBlogs = blogService.getPublicBlogs();
-        return ResponseEntity.ok(limitedBlogs);
     }
 
 

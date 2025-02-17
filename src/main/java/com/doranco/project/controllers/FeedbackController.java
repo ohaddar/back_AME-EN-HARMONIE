@@ -37,17 +37,12 @@ public class FeedbackController {
 
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<FeedbackDTO>> getFeedbacks() {
         List<FeedbackDTO> listOfAllFeedbacks = feedbackService.getAllFeedbacks();
         return ResponseEntity.ok(listOfAllFeedbacks);
     }
 
-    @GetMapping("/public")
-    public ResponseEntity<List<FeedbackDTO>> getPublicFeedbacks() {
-        List<FeedbackDTO> limitedFeedbacks = feedbackService.getPublicFeedbacks();
-        return ResponseEntity.ok(limitedFeedbacks);
-    }
+
 
 
     @GetMapping("/{id}")

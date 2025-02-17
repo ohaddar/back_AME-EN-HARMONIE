@@ -97,15 +97,6 @@ public class BlogServiceImp implements BlogService {
         }
     }
 
-    @Override
-    public List<Blog> getPublicBlogs() {
-        List<Blog> blogs = blogRepository.findAll();
-        for (Blog blog : blogs) {
-            blog.setImageUrl("http://localhost:8080/Blogs/image/" + blog.getId());
-        }
-
-        return blogs.subList(0, Math.min(2, blogs.size()));
-    }
 
     @Override
     public List<Blog> getBlogsByCategory(String category) {
