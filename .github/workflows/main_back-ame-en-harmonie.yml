@@ -21,8 +21,15 @@ jobs:
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
-          java-version: 'java21'
-          distribution: 'microsoft'
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Set environment variable for test profile
+        run: echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
+
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
 
       - name: Build with Maven
         run: mvn clean install
