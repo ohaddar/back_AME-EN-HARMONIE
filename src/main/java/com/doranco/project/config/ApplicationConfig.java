@@ -1,6 +1,7 @@
 package com.doranco.project.config;
 
 import com.doranco.project.repositories.IUserRepository;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,14 @@ public class ApplicationConfig {
     @Autowired
     IUserRepository userRepository;
 
+    private static String JWT_SECRET;
+    private static String CLIENT_URL;
+
+    static {
+        Dotenv dotenv = Dotenv.load();
+        JWT_SECRET = dotenv.get("JWT_SECRET");
+        CLIENT_URL=dotenv.get("CLIENT_URL");
+    }
 
     @Bean
     UserDetailsService userDetailsService() {
@@ -35,5 +44,14 @@ public class ApplicationConfig {
     BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    public static String getJwtSecret() {
+        return JWT_SECRET;
+    }
+
+    public static String getClientUrl() {
+        return CLIENT_URL;
+    }
+
 }
 

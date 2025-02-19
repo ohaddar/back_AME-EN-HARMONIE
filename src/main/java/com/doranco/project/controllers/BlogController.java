@@ -2,7 +2,6 @@ package com.doranco.project.controllers;
 
 import com.doranco.project.entities.Blog;
 import com.doranco.project.services.BlogService;
-import com.doranco.project.utils.FileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,7 @@ public class BlogController {
 
 
     @PostMapping("/save")
-    public ResponseEntity<Blog> saveBlogs(@RequestParam("image") MultipartFile file, @RequestParam("blog") String blogJson, Authentication authentication) {
+    public ResponseEntity<Blog> saveBlog(@RequestParam("image") MultipartFile file, @RequestParam("blog") String blogJson, Authentication authentication) {
         try {
             Blog savedBlog = blogService.saveBlog(blogJson, file);
             return ResponseEntity.ok(savedBlog);
@@ -34,7 +33,6 @@ public class BlogController {
     }
 
     @GetMapping("/{id}")
-
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Blog> getBlogById(@PathVariable Long id, Authentication authentication) {
         Optional<Blog> blogsById = blogService.getBlogById(id);
@@ -42,17 +40,11 @@ public class BlogController {
     }
 
     @GetMapping("/blogs")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<Blog>> getAllBlogs( Authentication authentication) {
+    public ResponseEntity<List<Blog>> getAllBlogs() {
 
         List<Blog> blogs = blogService.getAllBlogs();
         return ResponseEntity.ok(blogs);
 
-    }
-    @GetMapping("/public")
-    public ResponseEntity<List<Blog>> getPublicBlogs() {
-        List<Blog> limitedBlogs = blogService.getPublicBlogs();
-        return ResponseEntity.ok(limitedBlogs);
     }
 
 
