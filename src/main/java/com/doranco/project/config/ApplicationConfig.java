@@ -5,8 +5,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,10 +17,12 @@ public class ApplicationConfig {
     IUserRepository userRepository;
 
     private static String JWT_SECRET;
+    private static String CLIENT_URL;
 
     static {
         Dotenv dotenv = Dotenv.load();
         JWT_SECRET = dotenv.get("JWT_SECRET");
+        CLIENT_URL=dotenv.get("CLIENT_URL");
     }
 
     @Bean
@@ -47,6 +47,10 @@ public class ApplicationConfig {
 
     public static String getJwtSecret() {
         return JWT_SECRET;
+    }
+
+    public static String getClientUrl() {
+        return CLIENT_URL;
     }
 
 }

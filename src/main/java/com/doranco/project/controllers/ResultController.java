@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/results")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ResultController {
     @Autowired
     ResultService resultService;

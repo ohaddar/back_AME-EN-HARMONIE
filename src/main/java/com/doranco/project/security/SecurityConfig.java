@@ -14,6 +14,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import static com.doranco.project.config.ApplicationConfig.getClientUrl;
+import static com.doranco.project.config.ApplicationConfig.getJwtSecret;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
@@ -25,6 +28,8 @@ public class SecurityConfig {
     @Autowired
     AuthenticationProvider authenticationProvider;
 
+    private String clientUrl = getClientUrl();
+
 
     /**
      * Configures CORS (Cross-Origin Resource Sharing) settings to allow requests from the frontend.
@@ -33,7 +38,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.addAllowedOrigin("http://localhost:5173");
+        corsConfig.addAllowedOrigin(clientUrl);
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");
         corsConfig.addAllowedMethod("PUT");
@@ -56,7 +61,7 @@ public class SecurityConfig {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/**","/Blogs/**", "/feedback/**","/questionnaire/show","/results/**").permitAll()
+                        .requestMatchers("/auth/**","/Blogs/**", "/feedback/**","/questionnaire/show","/questionnaire/save","/results/**").permitAll()
                         .requestMatchers("/feedback/save").authenticated()
                         .anyRequest()
                         .authenticated()
