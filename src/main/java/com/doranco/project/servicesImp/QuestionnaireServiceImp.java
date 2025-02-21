@@ -11,6 +11,7 @@ public class QuestionnaireServiceImp implements QuestionnaireService {
 
     @Autowired
     IQuestionnaireRepository questionnaireRepository;
+
     @Override
     public Questionnaire saveQuestionnaire(Questionnaire questionnaire) {
         if (questionnaire == null) {
@@ -20,13 +21,13 @@ public class QuestionnaireServiceImp implements QuestionnaireService {
         return questionnaireRepository.save(questionnaire);
 
     }
-    @Override
-    public Questionnaire getQuestionnaire () {
 
-                try{
-                    return questionnaireRepository.findAll().getFirst();
-                }catch (Exception e) {
-                    throw new RuntimeException("Error occurred while fetching questionnaire.", e);
-                }
+    @Override
+    public Questionnaire getQuestionnaire() {
+        try {
+            return questionnaireRepository.findAll().getFirst();
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while fetching questionnaire.", e);
+        }
     }
 }
