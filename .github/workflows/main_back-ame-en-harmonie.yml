@@ -34,8 +34,11 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
-      - name: Create .env file
+      - name: Create .env file in target directory
         run: echo "${{ secrets.ENV_FILE_CONTENT }}" > ${{ github.workspace }}/target/.env
+
+      - name: Verify .env file exists in target directory
+        run: ls -la ${{ github.workspace }}/target/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -61,7 +64,10 @@ jobs:
         with:
           name: java-app
 
-      - name: Verify .env file
+      - name: Verify downloaded files
+        run: ls -la
+
+      - name: Display .env file contents
         run: cat .env
 
       - name: Login to Azure
@@ -71,10 +77,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_992C9A59A7CD4FE69B845D47F19C6312 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DE12BEAB42894E1FBA21ABA371915BB5 }}
 
-      - name: Deploy JAR and .env to Azure Web App
+      - name: Deploy JAR to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'back-ame-en-harmonie'
           slot-name: 'Production'
           package: '*.jar'
-          
