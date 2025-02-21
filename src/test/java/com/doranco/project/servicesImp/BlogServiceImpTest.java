@@ -4,7 +4,6 @@ import com.doranco.project.entities.Blog;
 import com.doranco.project.enums.CategoryEnum;
 import com.doranco.project.repositories.IBlogRepository;
 import com.doranco.project.utils.FileUpload;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,11 +11,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class BlogServiceImpTest {

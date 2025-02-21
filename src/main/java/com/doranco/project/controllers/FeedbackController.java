@@ -1,7 +1,6 @@
 package com.doranco.project.controllers;
 
 import com.doranco.project.dto.FeedbackDTO;
-import com.doranco.project.entities.Feedback;
 import com.doranco.project.services.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

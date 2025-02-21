@@ -1,7 +1,6 @@
 package com.doranco.project.controllers;
 
 import com.doranco.project.dto.ResultDto;
-import com.doranco.project.entities.Result;
 import com.doranco.project.repositories.IUserRepository;
 import com.doranco.project.services.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/results")

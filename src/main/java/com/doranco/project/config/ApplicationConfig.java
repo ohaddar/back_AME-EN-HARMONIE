@@ -1,7 +1,6 @@
 package com.doranco.project.config;
 
 import com.doranco.project.repositories.IUserRepository;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
