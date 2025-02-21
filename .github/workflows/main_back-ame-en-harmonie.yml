@@ -55,7 +55,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-app
-      
+
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
+
+      - name: Verify .env file
+        run: cat .env
+
+      - name: Move .env file to working directory
+        run: mv .env /home/site/wwwroot/.env
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
