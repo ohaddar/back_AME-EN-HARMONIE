@@ -65,7 +65,7 @@ jobs:
           az webapp config appsettings set \
             --name back-ame-en-harmonie \
             --resource-group rsg_ame-en-harmonie \
-            --settings JWT_SECRET=${{ secrets.JWT_SECRET }} CLIENT_URL=${{ secrets.CLIENT_URL }}
+            --settings JWT_SECRET=${{ secrets.JWT_SECRET }} CLIENT_URL=${{ secrets.CLIENT_URL }} DB_LOGIN=${{ secrets.DB_LOGIN }} DB_PASSWORD=${{ secrets.DB_PASSWORD }} DB_SERVER=${{ secrets.DB_SERVER }}
 
       - name: Deploy JAR to Azure Web App
         uses: azure/webapps-deploy@v3
