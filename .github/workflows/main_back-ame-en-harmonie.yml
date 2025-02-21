@@ -34,11 +34,16 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE_CONTENT }}" > ${{ github.workspace }}/target/.env
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: |
+            ${{ github.workspace }}/target/*.jar
+            ${{ github.workspace }}/target/.env
 
   deploy:
     runs-on: ubuntu-latest
@@ -56,14 +61,8 @@ jobs:
         with:
           name: java-app
 
-      - name: Create .env file
-        run: echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
-
       - name: Verify .env file
         run: cat .env
-
-      - name: Move .env file to working directory
-        run: mv .env /home/site/wwwroot/.env
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -72,8 +71,7 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_992C9A59A7CD4FE69B845D47F19C6312 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DE12BEAB42894E1FBA21ABA371915BB5 }}
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Deploy JAR and .env to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'back-ame-en-harmonie'
