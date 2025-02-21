@@ -27,6 +27,8 @@ jobs:
           echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
           echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> $GITHUB_ENV
+          echo "URI_MONGO=${{ secrets.URI_MONGO }}" >> $GITHUB_ENV
+          echo "DB_MONGO=${{ secrets.DB_MONGO_TEST }}" >> $GITHUB_ENV
 
       - name: Build with Maven
         run: mvn clean install
