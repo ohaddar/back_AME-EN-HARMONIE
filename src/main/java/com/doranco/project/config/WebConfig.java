@@ -1,16 +1,16 @@
 package com.doranco.project.config;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import static com.doranco.project.config.ApplicationConfig.getClientUrl;
-
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private String clientUrl = getClientUrl();
+    @Value("${CLIENT_URL}")
+    private String clientUrl;
 
     /**
      * Configures Cross-Origin Resource Sharing (CORS) settings for the application.

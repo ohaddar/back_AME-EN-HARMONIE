@@ -1,6 +1,7 @@
 package com.doranco.project.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,8 +15,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static com.doranco.project.config.ApplicationConfig.getClientUrl;
-import static com.doranco.project.config.ApplicationConfig.getJwtSecret;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +27,8 @@ public class SecurityConfig {
     @Autowired
     AuthenticationProvider authenticationProvider;
 
-    private String clientUrl = getClientUrl();
+    @Value("${CLIENT_URL}")
+    private String clientUrl;
 
 
     /**

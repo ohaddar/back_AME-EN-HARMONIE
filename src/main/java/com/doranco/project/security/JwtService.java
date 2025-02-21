@@ -17,11 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import static com.doranco.project.config.ApplicationConfig.getJwtSecret;
+
 @Service
 public class JwtService {
 
-    private String JWT_SECRET = getJwtSecret();
+    @Value("${JWT_SECRET}")
+    private String JWT_SECRET ;
 
     private SecretKey SECRET_KEY;
     private static final long EXPIRATION_TIME = 1000 * 60 * 60;

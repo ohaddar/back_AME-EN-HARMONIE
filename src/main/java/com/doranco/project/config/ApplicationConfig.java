@@ -16,15 +16,6 @@ public class ApplicationConfig {
     @Autowired
     IUserRepository userRepository;
 
-    private static String JWT_SECRET;
-    private static String CLIENT_URL;
-
-    static {
-        Dotenv dotenv = Dotenv.load();
-        JWT_SECRET = dotenv.get("JWT_SECRET");
-        CLIENT_URL=dotenv.get("CLIENT_URL");
-    }
-
     @Bean
     UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
@@ -43,14 +34,6 @@ public class ApplicationConfig {
     @Bean
     BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    public static String getJwtSecret() {
-        return JWT_SECRET;
-    }
-
-    public static String getClientUrl() {
-        return CLIENT_URL;
     }
 
 }
