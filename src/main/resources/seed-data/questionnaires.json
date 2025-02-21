@@ -1,5 +1,6 @@
 {
   "id":"1",
+
   "questions": [
     {
       "id": "0.1",
@@ -90,6 +91,75 @@
       "text": "Ces pensées sont-elles accompagnées d'actions répétitives pour diminuer l'anxiété ?",
       "responses": ["Oui", "Non"],
       "next": { "oui": "TOC", "non": "5.1" }
+    },
+    {
+      "id": "5.1",
+      "text": "Consommez-vous régulièrement des substances comme l'alcool ou la drogue pour faire face à vos émotions ?",
+      "responses": ["Oui", "Non"],
+      "next": { "oui": "5.2", "non": "6.1" }
+    },
+    {
+      "id": "5.2",
+      "text": "Utilisez-vous ces substances pour gérer des émotions spécifiques ?",
+      "responses": ["Oui", "Non"],
+      "next": { "oui": "5.3", "non": "6.1" }
+    },
+    {
+      "id": "5.3",
+      "text": "Avez-vous essayé d'arrêter sans succès ?",
+      "responses": ["Oui", "Non"],
+      "next": { "oui": "ADDICTION", "non": "6.1" }
+    },
+    {
+      "id": "6.1",
+      "text": "Avez-vous des variations extrêmes de l'humeur, passant de périodes de grande énergie à des périodes de dépression ?",
+      "responses": ["Oui", "Non"],
+      "next": { "oui": "6.2", "non": "7.1" }
+    },
+    {
+      "id": "6.2",
+      "text": "Durant les périodes de grande énergie, ressentez-vous le besoin de dormir moins ?",
+      "responses": ["Oui", "Non"],
+      "next": { "oui": "6.3", "non": "7.1" }
+    },
+    {
+      "id": "6.3",
+      "text": "Avez-vous des comportements impulsifs durant ces périodes ?",
+      "responses": ["Oui", "Non"],
+      "next": { "oui": "TROUBLE_BIPOLAIRE", "non": "7.1" }
+    },
+    {
+      "id": "7.1",
+      "text": "Avez-vous des peurs spécifiques ou des phobies qui impactent votre quotidien ?",
+      "responses": ["Oui", "Non"],
+      "next": { "oui": "7.2", "non": "8.1" }
+    },
+    {
+      "id": "7.2",
+      "text": "Quels sont les objets ou situations qui vous causent ces peurs ?",
+      "responses": [],
+      "next": { "default": "PHOBIE_SPECIFIQUE" }
+    },
+    {
+      "id": "8.1",
+      "text": "Avez-vous des symptômes physiques tels que des maux de tête, douleurs musculaires, sans cause médicale ?",
+      "responses": ["Oui", "Non"],
+      "next": { "oui": "TROUBLE_SOMATIQUE", "non": "8.2" }
+    },
+    {
+      "id": "8.2",
+      "text": "Avez-vous des pensées suicidaires ou des envies de vous faire du mal ?",
+      "responses": ["Oui", "Non"],
+      "next": { "oui": "INTERVENTION_IMMEDIATE_NECESSAIRE", "non": "8.3" }
+    },
+    {
+      "id": "8.3",
+      "text": "Avez-vous des difficultés de communication et d'interaction sociale ?",
+      "responses": ["Oui", "Non"],
+      "next": {
+        "oui": "TROUBLE_SPECTRE_AUTISTIQUE",
+        "non": "CONSULTATION_PROFESSIONNELLE_RECOMMANDEE"
+      }
     }
   ],
   "results": {

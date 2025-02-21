@@ -18,10 +18,7 @@ public class Question {
     @Id
     private String id;
     private String text;
-
-
     private List<String> responses;
-
     private Map<String, String> next;
 
 }
