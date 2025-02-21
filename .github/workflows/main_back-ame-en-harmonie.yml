@@ -25,15 +25,15 @@ jobs:
       - name: Set env variables for tests
         run: |
           echo "SPRING_PROFILES_ACTIVE=test" >> $GITHUB_ENV
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
-          echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> $GITHUB_ENV
-          echo "URI_MONGO=${{ secrets.URI_MONGO }}" >> $GITHUB_ENV
-          echo "DB_MONGO=${{ secrets.DB_MONGO_TEST }}" >> $GITHUB_ENV
-          echo "AEH_ADMIN_EMAIL=test@email.com" >> $GITHUB_ENV
-          echo "AEH_ADMIN_PASSWORD=testPassword@3" >> $GITHUB_ENV
-          echo "DB_SERVER=test-server" >> $GITHUB_ENV
-          echo "DB_LOGIN=test-login" >> $GITHUB_ENV
-          echo "DB_PASSWORD=testPassword@3" >> $GITHUB_ENV
+#          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
+#          echo "CLIENT_URL=${{ vars.CLIENT_URL }}" >> $GITHUB_ENV
+#          echo "URI_MONGO=${{ secrets.URI_MONGO }}" >> $GITHUB_ENV
+#          echo "DB_MONGO=${{ secrets.DB_MONGO_TEST }}" >> $GITHUB_ENV
+#          echo "AEH_ADMIN_EMAIL=test@email.com" >> $GITHUB_ENV
+#          echo "AEH_ADMIN_PASSWORD=testPassword@3" >> $GITHUB_ENV
+#          echo "DB_SERVER=test-server" >> $GITHUB_ENV
+#          echo "DB_LOGIN=test-login" >> $GITHUB_ENV
+#          echo "DB_PASSWORD=testPassword@3" >> $GITHUB_ENV
 
       - name: Build with Maven
         run: mvn clean install
