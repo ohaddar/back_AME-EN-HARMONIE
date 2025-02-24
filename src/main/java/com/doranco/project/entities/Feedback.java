@@ -14,7 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class Feedback {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "feedback_title", nullable = false)
     private String title;
