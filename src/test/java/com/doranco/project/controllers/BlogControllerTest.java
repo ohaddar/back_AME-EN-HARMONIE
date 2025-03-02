@@ -1,5 +1,6 @@
 package com.doranco.project.controllers;
 
+import com.doranco.project.dto.BlogDTO;
 import com.doranco.project.entities.Blog;
 import com.doranco.project.enums.CategoryEnum;
 import com.doranco.project.services.BlogService;
@@ -43,7 +44,9 @@ class BlogControllerTest {
         blog.setContent("Test content");
         blog.setId(1L);
 
-        when(blogService.saveBlog(any(String.class), any())).thenReturn(blog);
+        BlogDTO blogDTO= new BlogDTO(blog);
+
+        when(blogService.saveBlog(any(String.class), any())).thenReturn(blogDTO);
 
         mockMvc.perform(multipart("/Blogs/save")
                         .file("image", "imageData".getBytes())
@@ -62,7 +65,9 @@ class BlogControllerTest {
         blog.setContent("Test content");
         blog.setId(1L);
 
-        when(blogService.getBlogById(1L)).thenReturn(Optional.of(blog));
+        BlogDTO blogDTO= new BlogDTO(blog);
+
+        when(blogService.getBlogById(1L)).thenReturn(Optional.of(blogDTO));
 
         mockMvc.perform(get("/Blogs/{id}", 1L))
                 .andExpect(status().isOk())
@@ -89,7 +94,10 @@ class BlogControllerTest {
         Blog blog2 = new Blog();
         blog2.setTitle("Blog 2");
 
-        when(blogService.getAllBlogs()).thenReturn(Arrays.asList(blog1, blog2));
+        BlogDTO blogDTO1= new BlogDTO(blog1);
+        BlogDTO blogDTO2= new BlogDTO(blog2);
+
+        when(blogService.getAllBlogs()).thenReturn(Arrays.asList(blogDTO1, blogDTO2));
 
         mockMvc.perform(get("/Blogs/blogs"))
                 .andExpect(status().isOk())
@@ -114,7 +122,9 @@ class BlogControllerTest {
         Blog blog = new Blog();
         blog.setTitle("Updated Blog");
 
-        when(blogService.updateBlogById(any(Long.class), any(String.class), any())).thenReturn(blog);
+        BlogDTO blogDTO= new BlogDTO(blog);
+
+        when(blogService.updateBlogById(any(Long.class), any(String.class), any())).thenReturn(blogDTO);
 
         mockMvc.perform(put("/Blogs/update/{id}", 1L)
                         .param("blog", "{\"title\": \"Updated Blog\", \"content\": \"Updated content\"}")
@@ -130,7 +140,9 @@ class BlogControllerTest {
         Blog blog = new Blog();
         blog.setCategory(CategoryEnum.DEPRESSION);
 
-        when(blogService.getBlogsByCategory("DEPRESSION")).thenReturn(List.of(blog));
+        BlogDTO blogDTO= new BlogDTO(blog);
+
+        when(blogService.getBlogsByCategory("DEPRESSION")).thenReturn(List.of(blogDTO));
 
         mockMvc.perform(get("/Blogs/category/{category}", "DEPRESSION"))
                 .andExpect(status().isOk())

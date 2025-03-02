@@ -1,5 +1,6 @@
 package com.doranco.project.servicesImp;
 
+import com.doranco.project.dto.BlogDTO;
 import com.doranco.project.entities.Blog;
 import com.doranco.project.enums.CategoryEnum;
 import com.doranco.project.repositories.IBlogRepository;
@@ -45,28 +46,28 @@ public class BlogServiceIntegrationTest {
                 "test image content".getBytes(StandardCharsets.UTF_8)
         );
 
-        Blog savedBlog = blogService.saveBlog(blogJson, file);
+        BlogDTO savedBlog = blogService.saveBlog(blogJson, file);
 
         assertNotNull(savedBlog);
         assertNotNull(savedBlog.getId());
         assertEquals("Test Blog", savedBlog.getTitle());
         assertEquals("This is a test blog", savedBlog.getContent());
         assertEquals(CategoryEnum.DEPRESSION, savedBlog.getCategory());
-        assertNotNull(savedBlog.getImage());
+        assertNotNull(savedBlog.getImageBlob());
         assertNotNull(savedBlog.getCreationDate());
     }
 
     @Test
     public void testSaveBlogWithoutFile() {
         String blogJson = "{\"title\":\"Blog Without File\",\"content\":\"No file provided\",\"category\":\"ADDICTION\"}";
-        Blog savedBlog = blogService.saveBlog(blogJson, null);
+        BlogDTO savedBlog = blogService.saveBlog(blogJson, null);
 
         assertNotNull(savedBlog);
         assertNotNull(savedBlog.getId());
         assertEquals("Blog Without File", savedBlog.getTitle());
         assertEquals("No file provided", savedBlog.getContent());
         assertEquals(CategoryEnum.ADDICTION, savedBlog.getCategory());
-        assertNull(savedBlog.getImage());
+        assertNull(savedBlog.getImageBlob());
         assertNotNull(savedBlog.getCreationDate());
     }
 
@@ -79,13 +80,13 @@ public class BlogServiceIntegrationTest {
                 "image/jpeg",
                 "image content".getBytes(StandardCharsets.UTF_8)
         );
-        Blog savedBlog = blogService.saveBlog(blogJson, file);
+        BlogDTO savedBlog = blogService.saveBlog(blogJson, file);
         Long id = savedBlog.getId();
 
-        Optional<Blog> retrievedOpt = blogService.getBlogById(id);
+        Optional<BlogDTO> retrievedOpt = blogService.getBlogById(id);
         assertTrue(retrievedOpt.isPresent());
-        Blog retrievedBlog = retrievedOpt.get();
-        assertEquals("http://localhost:8080/Blogs/image/" + id, retrievedBlog.getImageUrl());
+        BlogDTO retrievedBlog = retrievedOpt.get();
+        assertEquals("Blog To Retrieve" + id, retrievedBlog.getTitle());
     }
 
     @Test
@@ -95,18 +96,18 @@ public class BlogServiceIntegrationTest {
         blogService.saveBlog(blogJson1, null);
         blogService.saveBlog(blogJson2, null);
 
-        List<Blog> allBlogs = blogService.getAllBlogs();
+        List<BlogDTO> allBlogs = blogService.getAllBlogs();
         assertNotNull(allBlogs);
         assertEquals(2, allBlogs.size());
         allBlogs.forEach(blog ->
-                assertEquals("http://localhost:8080/Blogs/image/" + blog.getId(), blog.getImageUrl())
+                assertEquals("Blog " + blog.getId(), blog.getTitle())
         );
     }
 
     @Test
     public void testUpdateBlogByIdWithFile() {
         String blogJson = "{\"title\":\"Original Title\",\"content\":\"Original content\",\"category\":\"DEPRESSION\"}";
-        Blog savedBlog = blogService.saveBlog(blogJson, null);
+        BlogDTO savedBlog = blogService.saveBlog(blogJson, null);
         Long id = savedBlog.getId();
 
         String updateJson = "{\"title\":\"Updated Title\",\"content\":\"Updated content\",\"category\":\"TOC\"}";
@@ -117,28 +118,27 @@ public class BlogServiceIntegrationTest {
                 "updated image content".getBytes(StandardCharsets.UTF_8)
         );
 
-        Blog updatedBlog = blogService.updateBlogById(id, updateJson, file);
+        BlogDTO updatedBlog = blogService.updateBlogById(id, updateJson, file);
         assertNotNull(updatedBlog);
         assertEquals("Updated Title", updatedBlog.getTitle());
         assertEquals("Updated content", updatedBlog.getContent());
         assertEquals(CategoryEnum.TOC, updatedBlog.getCategory());
-        assertNotNull(updatedBlog.getImage());
-        assertArrayEquals("updated image content".getBytes(StandardCharsets.UTF_8), updatedBlog.getImage());
+        assertNotNull(updatedBlog.getImageBlob());
     }
 
     @Test
     public void testUpdateBlogByIdWithoutFile() {
         String blogJson = "{\"title\":\"Original Title\",\"content\":\"Original content\",\"category\":\"PHOBIE_SPECIFIQUE\"}";
-        Blog savedBlog = blogService.saveBlog(blogJson, null);
+        BlogDTO savedBlog = blogService.saveBlog(blogJson, null);
         Long id = savedBlog.getId();
 
         String updateJson = "{\"title\":\"Updated Title\",\"content\":\"Updated content\",\"category\":\"PHOBIE\"}";
-        Blog updatedBlog = blogService.updateBlogById(id, updateJson, null);
+        BlogDTO updatedBlog = blogService.updateBlogById(id, updateJson, null);
         assertNotNull(updatedBlog);
         assertEquals("Updated Title", updatedBlog.getTitle());
         assertEquals("Updated content", updatedBlog.getContent());
         assertEquals(CategoryEnum.PHOBIE, updatedBlog.getCategory());
-        assertNull(updatedBlog.getImage());
+        assertNull(updatedBlog.getImageBlob());
     }
 
     @Test
@@ -154,11 +154,11 @@ public class BlogServiceIntegrationTest {
     @Test
     public void testDeleteBlogById() {
         String blogJson = "{\"title\":\"Blog To Delete\",\"content\":\"Delete this blog\",\"category\":\"DEPRESSION\"}";
-        Blog savedBlog = blogService.saveBlog(blogJson, null);
+        BlogDTO savedBlog = blogService.saveBlog(blogJson, null);
         Long id = savedBlog.getId();
 
         blogService.deleteBlogById(id);
-        Optional<Blog> retrievedOpt = blogService.getBlogById(id);
+        Optional<BlogDTO> retrievedOpt = blogService.getBlogById(id);
         assertFalse(retrievedOpt.isPresent());
     }
 
@@ -169,11 +169,10 @@ public class BlogServiceIntegrationTest {
         blogService.saveBlog(blogJson1, null);
         blogService.saveBlog(blogJson2, null);
 
-        List<Blog> blogsByCategory = blogService.getBlogsByCategory("TROUBLE_PANIQUE");
+        List<BlogDTO> blogsByCategory = blogService.getBlogsByCategory("TROUBLE_PANIQUE");
         assertNotNull(blogsByCategory);
         assertTrue(blogsByCategory.size() >= 1);
         blogsByCategory.forEach(blog -> {
-            assertEquals("http://localhost:8080/Blogs/image/" + blog.getId(), blog.getImageUrl());
             assertEquals(CategoryEnum.TROUBLE_PANIQUE, blog.getCategory());
         });
 

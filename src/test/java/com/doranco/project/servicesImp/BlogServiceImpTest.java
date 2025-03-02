@@ -1,5 +1,6 @@
 package com.doranco.project.servicesImp;
 
+import com.doranco.project.dto.BlogDTO;
 import com.doranco.project.entities.Blog;
 import com.doranco.project.enums.CategoryEnum;
 import com.doranco.project.repositories.IBlogRepository;
@@ -42,7 +43,7 @@ class BlogServiceImpTest {
         when(blogRepository.save(any(Blog.class))).thenReturn(blog);
         when(fileUpload.uploadFile(any(MultipartFile.class))).thenReturn(new byte[0]);
 
-        Blog savedBlog = blogService.saveBlog("{\"title\": \"Test Blog\", \"content\": \"Test content\"}", null);
+        BlogDTO savedBlog = blogService.saveBlog("{\"title\": \"Test Blog\", \"content\": \"Test content\"}", null);
 
         assert savedBlog.getTitle().equals("Test Blog");
         assert savedBlog.getContent().equals("Test content");
@@ -57,7 +58,7 @@ class BlogServiceImpTest {
 
         when(blogRepository.findById(1L)).thenReturn(Optional.of(blog));
 
-        Optional<Blog> result = blogService.getBlogById(1L);
+        Optional<BlogDTO> result = blogService.getBlogById(1L);
 
         assert result.isPresent();
         assert result.get().getTitle().equals("Test Blog");
