@@ -1,11 +1,9 @@
 package com.doranco.project.controllers;
 
-import com.doranco.project.entities.Blog;
+import com.doranco.project.dto.BlogDTO;
 import com.doranco.project.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,9 +21,9 @@ public class BlogController {
 
 
     @PostMapping("/save")
-    public ResponseEntity<Blog> saveBlog(@RequestParam("image") MultipartFile file, @RequestParam("blog") String blogJson, Authentication authentication) {
+    public ResponseEntity<BlogDTO> saveBlog(@RequestParam("image") MultipartFile file, @RequestParam("blog") String blogJson, Authentication authentication) {
         try {
-            Blog savedBlog = blogService.saveBlog(blogJson, file);
+            BlogDTO savedBlog = blogService.saveBlog(blogJson, file);
             return ResponseEntity.ok(savedBlog);
            } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -34,34 +32,18 @@ public class BlogController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Blog> getBlogById(@PathVariable Long id, Authentication authentication) {
-        Optional<Blog> blogsById = blogService.getBlogById(id);
+    public ResponseEntity<BlogDTO> getBlogById(@PathVariable Long id, Authentication authentication) {
+        Optional<BlogDTO> blogsById = blogService.getBlogById(id);
         return blogsById.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/blogs")
-    public ResponseEntity<List<Blog>> getAllBlogs() {
+    public ResponseEntity<List<BlogDTO>> getAllBlogs() {
 
-        List<Blog> blogs = blogService.getAllBlogs();
+        List<BlogDTO> blogs = blogService.getAllBlogs();
         return ResponseEntity.ok(blogs);
 
     }
-
-
-      @GetMapping("/image/{id}")
-      public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
-        Optional<Blog> blog = blogService.getBlogById(id);
-
-        if (blog.isPresent() && blog.get().getImage() != null) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.IMAGE_JPEG)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"image.jpg\"")
-                    .body(blog.get().getImage());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -81,7 +63,7 @@ public class BlogController {
                                         @RequestParam("blog") String blogJson) {
 
         try {
-            Blog updatedBlog = blogService.updateBlogById(id, blogJson, file);
+            BlogDTO updatedBlog = blogService.updateBlogById(id, blogJson, file);
             return ResponseEntity.ok(updatedBlog);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -96,7 +78,7 @@ public class BlogController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<?> getBlogsByCategory(@PathVariable String category, Authentication authentication) {
 
-            List<Blog> blogs = blogService.getBlogsByCategory(category);
+            List<BlogDTO> blogs = blogService.getBlogsByCategory(category);
             return ResponseEntity.ok(blogs);
     }
 

@@ -1,5 +1,6 @@
 package com.doranco.project.servicesImp;
 
+import com.doranco.project.dto.BlogDTO;
 import com.doranco.project.entities.Blog;
 import com.doranco.project.enums.CategoryEnum;
 import com.doranco.project.repositories.IBlogRepository;
@@ -13,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 
 public class BlogServiceImp implements BlogService {
@@ -24,7 +27,7 @@ public class BlogServiceImp implements BlogService {
     private FileUpload fileUpload;
 
     @Override
-    public Blog saveBlog(String blogJson, MultipartFile file) {
+    public BlogDTO saveBlog(String blogJson, MultipartFile file) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             Blog blog = objectMapper.readValue(blogJson, Blog.class);
@@ -35,7 +38,8 @@ public class BlogServiceImp implements BlogService {
             }
 
             blog.setCreationDate(new Date());
-            return blogRepository.save(blog);
+            Blog savedBlog = blogRepository.save(blog);
+            return new BlogDTO(savedBlog);
         } catch (Exception e) {
             throw new RuntimeException("Error saving blog", e);
         }
@@ -43,24 +47,18 @@ public class BlogServiceImp implements BlogService {
     }
 
     @Override
-    public Optional<Blog> getBlogById(Long id) {
+    public Optional<BlogDTO> getBlogById(Long id) {
         Optional<Blog> blogById = blogRepository.findById(id);
-        if(blogById.isPresent()) {
-            Blog blog = blogById.get();
-            blog.setImageUrl("http://localhost:8080/Blogs/image/" + blog.getId());
-        }
-        return blogById;
 
+       return Optional.of(new BlogDTO(blogById.get()));
     }
 
     @Override
-    public List<Blog> getAllBlogs() {
+    public List<BlogDTO> getAllBlogs() {
          List<Blog> allBlogs = blogRepository.findAll();
-        for (Blog blog : allBlogs) {
-            blog.setImageUrl("http://localhost:8080/Blogs/image/" + blog.getId());
-        }
-        return allBlogs;
-
+        return allBlogs.stream()
+                .map(BlogDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -68,10 +66,8 @@ public class BlogServiceImp implements BlogService {
         blogRepository.deleteById(id);
     }
 
-
-
     @Override
-    public Blog updateBlogById(Long id, String blogJson, MultipartFile file) {
+    public BlogDTO updateBlogById(Long id, String blogJson, MultipartFile file) {
         Optional<Blog> optionalBlog = blogRepository.findById(id);
         if (optionalBlog.isPresent()) {
             Blog existingBlog = optionalBlog.get();
@@ -88,7 +84,8 @@ public class BlogServiceImp implements BlogService {
                     existingBlog.setImage(imageData);
                 }
 
-                return blogRepository.save(existingBlog);
+                Blog blog = blogRepository.save(existingBlog);
+                return  new BlogDTO(blog);
             } catch (Exception e) {
                 throw new RuntimeException("Error updating blog", e);
             }
@@ -97,20 +94,16 @@ public class BlogServiceImp implements BlogService {
         }
     }
 
-
     @Override
-    public List<Blog> getBlogsByCategory(String category) {
+    public List<BlogDTO> getBlogsByCategory(String category) {
         try {
             CategoryEnum categoryEnum = CategoryEnum.valueOf(category.toUpperCase());
               List<Blog> blogs =  blogRepository.findByCategory(categoryEnum);
-            for (Blog blog : blogs) {
-                blog.setImageUrl("http://localhost:8080/Blogs/image/" + blog.getId());
-            }
-            return blogs;
-        } catch (IllegalArgumentException e) {
+
+            return blogs.stream()
+                    .map(BlogDTO::new)
+                    .collect(Collectors.toList());        } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid category: " + category, e);
         }
     }
-
-
 }
