@@ -1,7 +1,6 @@
 package com.doranco.project.servicesImp;
 
 import com.doranco.project.dto.BlogDTO;
-import com.doranco.project.entities.Blog;
 import com.doranco.project.enums.CategoryEnum;
 import com.doranco.project.repositories.IBlogRepository;
 import com.doranco.project.services.BlogService;
@@ -20,7 +19,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Execution(ExecutionMode.SAME_THREAD)
 @SpringBootTest
 @ActiveProfiles("test")
 public class BlogServiceIntegrationTest {
