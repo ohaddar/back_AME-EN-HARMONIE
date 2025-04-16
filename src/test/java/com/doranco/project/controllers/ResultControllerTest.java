@@ -32,7 +32,7 @@ class ResultControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         result = new ResultDto();
-        result.setId(1L);
+        result.setId("1L");
         result.setDescription("Test result");
         result.setDatetime("2025-01-20");
     }
@@ -45,7 +45,7 @@ class ResultControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(1L, response.getBody().getId());
+        assertEquals("1L", response.getBody().getId());
     }
 
     @Test
@@ -57,6 +57,6 @@ class ResultControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertFalse(response.getBody().isEmpty());
-        assertEquals(1L, response.getBody().get(0).getId());
+        assertEquals("1L", response.getBody().get(0).getId());
     }
 }

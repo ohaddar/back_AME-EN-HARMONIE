@@ -41,7 +41,7 @@ public class FeedbackServiceImpTest {
         MockitoAnnotations.openMocks(this);
         mockAuth = mock(Authentication.class);
         user = new User();
-        user.setId(1L);
+        user.setId("1L");
         user.setFirstname("John");
         user.setLastname("DeFee");
         user.setAvatar("avatar.png");
@@ -49,7 +49,7 @@ public class FeedbackServiceImpTest {
         user.setEmail("john.defee@example.com");
 
         feedback = new Feedback();
-        feedback.setId(1L);
+        feedback.setId("1L");
         feedback.setTitle("Test Feedback");
         feedback.setContent("This is a feedback.");
         feedback.setPublicationDate(new Date());
@@ -63,7 +63,7 @@ public class FeedbackServiceImpTest {
         when(authentication.getPrincipal()).thenReturn(user);
         when(feedbackRepository.save(any(Feedback.class))).thenAnswer(invocation -> {
             Feedback savedFeedback = invocation.getArgument(0);
-            savedFeedback.setId(1L);
+            savedFeedback.setId("1L");
             return savedFeedback;
         });
 
@@ -78,12 +78,12 @@ public class FeedbackServiceImpTest {
     @Test
     public void testGetAllFeedbacks() {
         Feedback feedback1 = new Feedback();
-        feedback1.setId(1L);
+        feedback1.setId("1L");
         feedback1.setTitle("Feedback 1");
         feedback1.setUser(user);
 
         Feedback feedback2 = new Feedback();
-        feedback2.setId(2L);
+        feedback2.setId("2L");
         feedback2.setTitle("Feedback 2");
         feedback2.setUser(user);
 
@@ -97,9 +97,9 @@ public class FeedbackServiceImpTest {
 
     @Test
     public void testGetFeedbackById_Success() {
-        when(feedbackRepository.findById(1L)).thenReturn(Optional.of(feedback));
+        when(feedbackRepository.findById("1L")).thenReturn(Optional.of(feedback));
 
-        Optional<FeedbackDTO> result = feedbackService.getFeedbackById(1L);
+        Optional<FeedbackDTO> result = feedbackService.getFeedbackById("1L");
 
         assertTrue(result.isPresent());
         assertEquals(feedback.getId(), result.get().getId());
@@ -111,20 +111,20 @@ public class FeedbackServiceImpTest {
 
     @Test
     public void testGetFeedbackById_NotFound() {
-        when(feedbackRepository.findById(1L)).thenReturn(Optional.empty());
+        when(feedbackRepository.findById("1L")).thenReturn(Optional.empty());
 
         RuntimeException thrown;
         thrown = Assertions.<RuntimeException>assertThrows(RuntimeException.class, () -> {
-            feedbackService.getFeedbackById(1L);
+            feedbackService.getFeedbackById("1L");
         });
 
-        assertEquals("Feedback not found with id: 1", thrown.getMessage());
+        assertEquals("Feedback not found with id: 1L", thrown.getMessage());
     }
 
     @Test
     public void testGetFeedbackByUserId_Success() {
         when(authentication.getPrincipal()).thenReturn(user);
-        when(feedbackRepository.findFeedbackByUserId(1L)).thenReturn(Optional.of(feedback));
+        when(feedbackRepository.findFeedbackByUserId("1L")).thenReturn(Optional.of(feedback));
 
         FeedbackDTO result = feedbackService.getFeedbackByUserId(authentication);
 
@@ -135,7 +135,7 @@ public class FeedbackServiceImpTest {
     @Test
     public void testGetFeedbackByUserId_NotFound() {
         when(authentication.getPrincipal()).thenReturn(user);
-        when(feedbackRepository.findFeedbackByUserId(1L)).thenReturn(Optional.empty());
+        when(feedbackRepository.findFeedbackByUserId("1L")).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
             feedbackService.getFeedbackByUserId(authentication);

@@ -47,10 +47,10 @@ public class BlogServiceImp implements BlogService {
     }
 
     @Override
-    public Optional<BlogDTO> getBlogById(Long id) {
+    public Optional<BlogDTO> getBlogById(String id) {
         Optional<Blog> blogById = blogRepository.findById(id);
 
-       return Optional.of(new BlogDTO(blogById.get()));
+        return blogById.map(BlogDTO::new);
     }
 
     @Override
@@ -62,12 +62,12 @@ public class BlogServiceImp implements BlogService {
     }
 
     @Override
-    public void deleteBlogById(Long id) {
+    public void deleteBlogById(String id) {
         blogRepository.deleteById(id);
     }
 
     @Override
-    public BlogDTO updateBlogById(Long id, String blogJson, MultipartFile file) {
+    public BlogDTO updateBlogById(String id, String blogJson, MultipartFile file) {
         Optional<Blog> optionalBlog = blogRepository.findById(id);
         if (optionalBlog.isPresent()) {
             Blog existingBlog = optionalBlog.get();

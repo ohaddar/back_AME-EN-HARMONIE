@@ -13,7 +13,7 @@ public interface FeedbackService {
     List<FeedbackDTO> getAllFeedbacks();
 
 
-    Optional<FeedbackDTO> getFeedbackById(Long id);
+    Optional<FeedbackDTO> getFeedbackById(String id);
 
     FeedbackDTO getFeedbackByUserId(Authentication authentication);
 }

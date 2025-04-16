@@ -30,7 +30,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public ResponseEntity<?> register(Map<String, String> request) {
-        User user = new User(0L,
+        User user = new User("0",
                 request.get("firstname"),
                 request.get("lastname"),
                 request.get("email"),
@@ -113,7 +113,7 @@ public class UserServiceImp implements UserService {
     public List<Map<String, String>> getAllUsers() {
         return userRepository.findAll().stream().map(user -> {
             Map<String, String> map = new HashMap<>();
-            map.put("id", Long.toString(user.getId()));
+            map.put("id",(user.getId()));
             map.put("firstname", user.getFirstname());
             map.put("lastname", user.getLastname());
             map.put("email", user.getEmail());

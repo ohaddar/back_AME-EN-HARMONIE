@@ -41,14 +41,14 @@ class ResultServiceImpTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         user = new User();
-        user.setId(1L);
+        user.setId("1L");
         user.setFirstname("John");
         user.setLastname("DeFee");
         user.setAvatar("avatar.png");
         user.setRole(RoleEnum.USER);
         user.setEmail("email@hell.com");
         result = new ResultDto(
-                1L,
+                "1L",
                 "Test result",
                 "2025-01-20",
                 new UserDTO(user.getId(), user.getFirstname(), user.getLastname(), user.getAvatar(), user.getRole(), user.getUsername()),
@@ -72,7 +72,7 @@ class ResultServiceImpTest {
         System.out.println("Result before saving: " + result);
         when(resultRepository.save(any(Result.class))).thenAnswer(invocation -> {
             Result savedResult = invocation.getArgument(0);
-            savedResult.setId(1L);
+            savedResult.setId("1L");
             return savedResult;
         });
         ResultDto savedResult = resultServiceImp.saveUserTestResult(resultDto, authentication);
@@ -82,7 +82,7 @@ class ResultServiceImpTest {
         System.out.println("Saved result: " + savedResult);
 
         assertNotNull(savedResult);
-        Assertions.assertEquals(1L, savedResult.getId());
+        Assertions.assertEquals("1L", savedResult.getId());
         Assertions.assertEquals("Test result", savedResult.getDescription());
         verify(resultRepository, times(1)).save(any(Result.class));
     }
@@ -94,13 +94,13 @@ class ResultServiceImpTest {
 
         when(authentication.getPrincipal()).thenReturn(user);
         when(resultRepository.getResultsByUserId(user.getId())).thenReturn(Collections.singletonList(new Result(
-                1L, "Test result", "2025-01-20", user, "Q1"
+                "1L", "Test result", "2025-01-20",  "Q1", user
         )));
         var results = resultServiceImp.getResultsByUserId(authentication);
 
         assertNotNull(results);
         Assertions.assertFalse(results.isEmpty());
-        Assertions.assertEquals(1L, results.getFirst().getId());
+        Assertions.assertEquals("1L", results.getFirst().getId());
         verify(resultRepository, times(1)).getResultsByUserId(user.getId());
     }
 

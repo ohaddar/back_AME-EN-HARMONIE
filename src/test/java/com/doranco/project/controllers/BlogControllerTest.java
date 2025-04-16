@@ -42,7 +42,7 @@ class BlogControllerTest {
         Blog blog = new Blog();
         blog.setTitle("Test Blog");
         blog.setContent("Test content");
-        blog.setId(1L);
+        blog.setId("1");
 
         BlogDTO blogDTO= new BlogDTO(blog);
 
@@ -63,28 +63,28 @@ class BlogControllerTest {
         Blog blog = new Blog();
         blog.setTitle("Test Blog");
         blog.setContent("Test content");
-        blog.setId(1L);
+        blog.setId("1");
 
         BlogDTO blogDTO= new BlogDTO(blog);
 
-        when(blogService.getBlogById(1L)).thenReturn(Optional.of(blogDTO));
+        when(blogService.getBlogById("1")).thenReturn(Optional.of(blogDTO));
 
-        mockMvc.perform(get("/Blogs/{id}", 1L))
+        mockMvc.perform(get("/Blogs/{id}", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Test Blog"))
                 .andExpect(jsonPath("$.content").value("Test content"));
 
-        verify(blogService, times(1)).getBlogById(1L);
+        verify(blogService, times(1)).getBlogById("1");
     }
 
     @Test
     void testGetBlogById_NotFound() throws Exception {
-        when(blogService.getBlogById(1L)).thenReturn(Optional.empty());
+        when(blogService.getBlogById("1")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/Blogs/{id}", 1L))
+        mockMvc.perform(get("/Blogs/{id}", "1"))
                 .andExpect(status().isNotFound());
 
-        verify(blogService, times(1)).getBlogById(1L);
+        verify(blogService, times(1)).getBlogById("1");
     }
 
     @Test
@@ -109,12 +109,12 @@ class BlogControllerTest {
 
     @Test
     void testDeleteBlogById() throws Exception {
-        doNothing().when(blogService).deleteBlogById(1L);
+        doNothing().when(blogService).deleteBlogById("1");
 
-        mockMvc.perform(delete("/Blogs/{id}", 1L))
+        mockMvc.perform(delete("/Blogs/{id}", "1"))
                 .andExpect(status().isNoContent());
 
-        verify(blogService, times(1)).deleteBlogById(1L);
+        verify(blogService, times(1)).deleteBlogById("1");
     }
 
     @Test
@@ -124,15 +124,15 @@ class BlogControllerTest {
 
         BlogDTO blogDTO= new BlogDTO(blog);
 
-        when(blogService.updateBlogById(any(Long.class), any(String.class), any())).thenReturn(blogDTO);
+        when(blogService.updateBlogById(any(String.class), any(String.class), any())).thenReturn(blogDTO);
 
-        mockMvc.perform(put("/Blogs/update/{id}", 1L)
+        mockMvc.perform(put("/Blogs/update/{id}", "1")
                         .param("blog", "{\"title\": \"Updated Blog\", \"content\": \"Updated content\"}")
                         .param("image", "imageData"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Updated Blog"));
 
-        verify(blogService, times(1)).updateBlogById(any(Long.class), any(String.class), any());
+        verify(blogService, times(1)).updateBlogById(any(String.class), any(String.class), any());
     }
 
     @Test

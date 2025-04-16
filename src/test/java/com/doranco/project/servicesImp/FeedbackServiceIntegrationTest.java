@@ -48,7 +48,7 @@ public class FeedbackServiceIntegrationTest {
         userRepository.deleteAll();
 
         testUser = new User();
-        testUser.setId(1L);
+        testUser.setId("1L");
         testUser.setFirstname("Test");
         testUser.setLastname("User");
         testUser.setEmail("testuser" + System.currentTimeMillis() + "@example.com");

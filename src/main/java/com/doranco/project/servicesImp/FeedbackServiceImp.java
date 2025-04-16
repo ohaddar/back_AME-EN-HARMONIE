@@ -83,7 +83,7 @@ public class FeedbackServiceImp implements FeedbackService {
     }
 
     @Override
-    public Optional<FeedbackDTO> getFeedbackById(Long id) {
+    public Optional<FeedbackDTO> getFeedbackById(String id) {
         Optional<Feedback> feedbacksById = feedbackRepository.findById(id);
 
         if (feedbacksById.isPresent()) {

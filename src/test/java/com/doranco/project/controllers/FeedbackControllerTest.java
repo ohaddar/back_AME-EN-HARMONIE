@@ -43,10 +43,10 @@ public class FeedbackControllerTest {
     @Test
     void testSaveFeedback() throws Exception {
         FeedbackDTO feedback = new FeedbackDTO();
-        UserDTO user = new UserDTO(3L, "John", "DeFee", "avatar.png", RoleEnum.USER, "john.defee@example.com");
+        UserDTO user = new UserDTO("3L", "John", "DeFee", "avatar.png", RoleEnum.USER, "john.defee@example.com");
 
         feedback.setTitle("Test Title");
-        feedback.setId(1L);
+        feedback.setId("1L");
         feedback.setContent("Test Content");
         feedback.setPublicationDate(null);
         feedback.setUser(user);
@@ -85,13 +85,13 @@ public class FeedbackControllerTest {
     @Test
     void testGetFeedbackById() throws Exception {
         FeedbackDTO feedback = new FeedbackDTO();
-        feedback.setId(1L);
+        feedback.setId("1L");
         feedback.setTitle("Test Title");
         feedback.setContent("Test Content");
 
-        when(feedbackService.getFeedbackById(1L)).thenReturn(Optional.of(feedback));
+        when(feedbackService.getFeedbackById("1L")).thenReturn(Optional.of(feedback));
 
-        mockMvc.perform(get("/feedback/1")
+        mockMvc.perform(get("/feedback/1L")
                         .header("Authorization", "Bearer someToken"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Test Title"))
@@ -99,10 +99,10 @@ public class FeedbackControllerTest {
     }
     @Test
     void testGetFeedbackByUserId() throws Exception {
-        UserDTO user = new UserDTO(3L, "John", "DeFee","avatar.png", RoleEnum.USER, "john.defee@example.com" );
+        UserDTO user = new UserDTO("3L", "John", "DeFee","avatar.png", RoleEnum.USER, "john.defee@example.com" );
 
         FeedbackDTO feedback = new FeedbackDTO();
-        feedback.setId(1L);
+        feedback.setId("1L");
         feedback.setTitle("User Feedback");
         feedback.setContent("Content by John");
         feedback.setUser(user);

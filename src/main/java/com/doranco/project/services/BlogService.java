@@ -9,9 +9,9 @@ import java.util.Optional;
 @Service
 public interface BlogService {
     BlogDTO saveBlog(String blogJson, MultipartFile file);
-    Optional<BlogDTO> getBlogById(Long id);
+    Optional<BlogDTO> getBlogById(String id);
     List<BlogDTO> getAllBlogs() ;
-    void deleteBlogById(Long id);
-    BlogDTO updateBlogById(Long id, String blogJson, MultipartFile file);
+    void deleteBlogById(String id);
+    BlogDTO updateBlogById(String id, String blogJson, MultipartFile file);
     List<BlogDTO> getBlogsByCategory(String category);
 }

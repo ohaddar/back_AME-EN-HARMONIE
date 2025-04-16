@@ -54,11 +54,11 @@ class BlogServiceImpTest {
         Blog blog = new Blog();
         blog.setTitle("Test Blog");
         blog.setContent("Test content");
-        blog.setId(1L);
+        blog.setId("1L");
 
-        when(blogRepository.findById(1L)).thenReturn(Optional.of(blog));
+        when(blogRepository.findById("1L")).thenReturn(Optional.of(blog));
 
-        Optional<BlogDTO> result = blogService.getBlogById(1L);
+        Optional<BlogDTO> result = blogService.getBlogById("1L");
 
         assert result.isPresent();
         assert result.get().getTitle().equals("Test Blog");

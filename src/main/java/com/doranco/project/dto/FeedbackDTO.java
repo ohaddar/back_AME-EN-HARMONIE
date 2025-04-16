@@ -9,7 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FeedbackDTO {
-    private Long id;
+    private String id;
     private String title;
     private String content;
     private Date publicationDate;

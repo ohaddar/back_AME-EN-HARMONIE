@@ -7,7 +7,7 @@ import java.util.Base64;
 import java.util.Date;
 
 public class BlogDTO {
-    private final Long id;
+    private final String id;
     private final String title;
     private final String content;
     private String imageBlob;
@@ -26,7 +26,7 @@ public class BlogDTO {
         }
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

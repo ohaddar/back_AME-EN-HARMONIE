@@ -1,31 +1,25 @@
 package com.doranco.project.entities;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 
-@Entity
-@Table(name = "results")
+@Document(collection = "results")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Result {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
     private String datetime;
+    private String questionnaireId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "questionnaire_id", nullable = false)
-    private String questionnaireId;
 }

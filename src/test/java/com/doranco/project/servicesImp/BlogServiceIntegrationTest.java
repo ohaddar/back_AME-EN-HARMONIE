@@ -79,12 +79,12 @@ public class BlogServiceIntegrationTest {
                 "image content".getBytes(StandardCharsets.UTF_8)
         );
         BlogDTO savedBlog = blogService.saveBlog(blogJson, file);
-        Long id = savedBlog.getId();
+        String id = savedBlog.getId();
 
         Optional<BlogDTO> retrievedOpt = blogService.getBlogById(id);
         assertTrue(retrievedOpt.isPresent());
         BlogDTO retrievedBlog = retrievedOpt.get();
-        assertEquals("Blog To Retrieve" + id, retrievedBlog.getTitle());
+        assertEquals("Blog To Retrieve" , retrievedBlog.getTitle());
     }
 
     @Test
@@ -97,16 +97,13 @@ public class BlogServiceIntegrationTest {
         List<BlogDTO> allBlogs = blogService.getAllBlogs();
         assertNotNull(allBlogs);
         assertEquals(2, allBlogs.size());
-        allBlogs.forEach(blog ->
-                assertEquals("Blog " + blog.getId(), blog.getTitle())
-        );
     }
 
     @Test
     public void testUpdateBlogByIdWithFile() {
         String blogJson = "{\"title\":\"Original Title\",\"content\":\"Original content\",\"category\":\"DEPRESSION\"}";
         BlogDTO savedBlog = blogService.saveBlog(blogJson, null);
-        Long id = savedBlog.getId();
+        String id = savedBlog.getId();
 
         String updateJson = "{\"title\":\"Updated Title\",\"content\":\"Updated content\",\"category\":\"TOC\"}";
         MockMultipartFile file = new MockMultipartFile(
@@ -128,7 +125,7 @@ public class BlogServiceIntegrationTest {
     public void testUpdateBlogByIdWithoutFile() {
         String blogJson = "{\"title\":\"Original Title\",\"content\":\"Original content\",\"category\":\"PHOBIE_SPECIFIQUE\"}";
         BlogDTO savedBlog = blogService.saveBlog(blogJson, null);
-        Long id = savedBlog.getId();
+        String id = savedBlog.getId();
 
         String updateJson = "{\"title\":\"Updated Title\",\"content\":\"Updated content\",\"category\":\"PHOBIE\"}";
         BlogDTO updatedBlog = blogService.updateBlogById(id, updateJson, null);
@@ -142,7 +139,7 @@ public class BlogServiceIntegrationTest {
     @Test
     public void testUpdateBlogById_NotFound() {
         String updateJson = "{\"title\":\"Updated Title\",\"content\":\"Updated content\",\"category\":\"DEPRESSION\"}";
-        Long nonExistentId = 999L;
+        String nonExistentId = "999L";
         Exception exception = assertThrows(RuntimeException.class, () ->
                 blogService.updateBlogById(nonExistentId, updateJson, null)
         );
@@ -153,7 +150,7 @@ public class BlogServiceIntegrationTest {
     public void testDeleteBlogById() {
         String blogJson = "{\"title\":\"Blog To Delete\",\"content\":\"Delete this blog\",\"category\":\"DEPRESSION\"}";
         BlogDTO savedBlog = blogService.saveBlog(blogJson, null);
-        Long id = savedBlog.getId();
+        String id = savedBlog.getId();
 
         blogService.deleteBlogById(id);
         Optional<BlogDTO> retrievedOpt = blogService.getBlogById(id);

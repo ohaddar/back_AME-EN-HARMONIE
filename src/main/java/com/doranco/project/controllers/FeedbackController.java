@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,10 +47,12 @@ public class FeedbackController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<Optional<FeedbackDTO>>getFeedbackById(@PathVariable Long id, Authentication authentication) {
-        Optional<FeedbackDTO> feedbacksById = feedbackService.getFeedbackById(id);
-            return ResponseEntity.ok(feedbacksById);
+    public ResponseEntity<FeedbackDTO> getFeedbackById(@PathVariable String id, Authentication authentication) {
+        return feedbackService.getFeedbackById(id)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Feedback not found"));
     }
+
     @GetMapping("/user")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<FeedbackDTO> getFeedbackByUserId(Authentication authentication) {

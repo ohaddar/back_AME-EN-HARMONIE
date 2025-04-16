@@ -63,7 +63,7 @@ public class UserServiceImpTest {
         Map<String, String> request = new HashMap<>();
         request.put("email", "john.doe@example.com");
 
-        User existingUser = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
+        User existingUser = new User("1L", "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(existingUser));
 
         ResponseEntity<?> response = userService.register(request);
@@ -76,7 +76,7 @@ public class UserServiceImpTest {
         request.put("email", "john.doe@example.com");
         request.put("password", "password123");
 
-        User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
+        User user = new User("1L", "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
         when(loginAttemptService.isBlocked("john.doe@example.com")).thenReturn(false);
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("password123", "password123")).thenReturn(true);
@@ -104,7 +104,7 @@ public class UserServiceImpTest {
         request.put("email", "john.doe@example.com");
         request.put("password", "incorrect_password");
 
-        User user = new User(1L, "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
+        User user = new User("1L", "John", "Doe", "john.doe@example.com", "avatar.png", "password123", RoleEnum.USER);
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("incorrect_password", "password123")).thenReturn(false);
 
