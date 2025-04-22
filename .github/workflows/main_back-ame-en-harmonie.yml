@@ -1,4 +1,4 @@
-name: Build and deploy JAR app to Azure Web App - back-ame-en-harmonie
+name: Build and deploy JAR app to Render - back-ame-en-harmonie
 
 on:
   push:
@@ -54,24 +54,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-app
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_026A5BBBAF9346D49683B71A843CA2BF }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_992C9A59A7CD4FE69B845D47F19C6312 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DE12BEAB42894E1FBA21ABA371915BB5 }}
-
-      - name: Set Azure App Settings
+      - name: Trigger Render deployment
         run: |
-          az webapp config appsettings set \
-            --name back-ame-en-harmonie \
-            --resource-group rsg_ame-en-harmonie \
-            --settings "JWT_SECRET=${{ secrets.JWT_SECRET }}" "CLIENT_URL=${{ vars.CLIENT_URL }}" "DB_LOGIN=${{ secrets.DB_LOGIN }}" "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" "DB_SERVER=${{ secrets.DB_SERVER }}" "AEH_ADMIN_EMAIL=${{ secrets.AEH_ADMIN_EMAIL }}" "AEH_ADMIN_PASSWORD=${{ secrets.AEH_ADMIN_PASSWORD }}" "URI_MONGO=${{ secrets.URI_MONGO }}" "DB_MONGO=${{ secrets.DB_MONGO }}"
+         curl -X POST \ https://api.render.com/deploy/srv-d03kjeje5dus73ad5d5g?key=Ronm7PIfxKk
+   
 
-      - name: Deploy JAR to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'back-ame-en-harmonie'
-          slot-name: 'Production'
-          package: '*.jar'
