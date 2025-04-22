@@ -56,6 +56,6 @@ jobs:
           name: java-app
       - name: Trigger Render deployment
         run: |
-         curl -X POST \ https://api.render.com/deploy/srv-d03kjeje5dus73ad5d5g?key=Ronm7PIfxKk
+          curl -X POST "https://api.render.com/deploy/srv-d03kjeje5dus73ad5d5g?key=${{ secrets.RENDER_API_KEY }}"
    
 
