@@ -31,7 +31,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+        String path = request.getServletPath();
 
+        if (path.startsWith("/auth")
+                || path.startsWith("/Blogs")
+                || path.startsWith("/feedback")
+                || path.startsWith("/questionnaire/show")
+                || path.startsWith("/questionnaire/save")
+                || path.startsWith("/results")) {
+            logger.info("Public route accessed: " + path + " — skipping JWT filter");
+            filterChain.doFilter(request, response);
+            return;
+        }
         // Extract the 'Authorization' header from the request
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
