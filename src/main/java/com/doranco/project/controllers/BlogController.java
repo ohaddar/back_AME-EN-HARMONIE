@@ -31,7 +31,6 @@ public class BlogController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<BlogDTO> getBlogById(@PathVariable String id, Authentication authentication) {
         Optional<BlogDTO> blogsById = blogService.getBlogById(id);
         return blogsById.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
@@ -46,7 +45,6 @@ public class BlogController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteBlogById(@PathVariable String id) {
         try {
             blogService.deleteBlogById(id);
@@ -57,7 +55,6 @@ public class BlogController {
     }
 
     @PutMapping("/update/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateBlog(@PathVariable String id,
                                         @RequestParam(value = "image", required = false) MultipartFile file,
                                         @RequestParam("blog") String blogJson) {

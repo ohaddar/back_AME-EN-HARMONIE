@@ -46,7 +46,6 @@ public class FeedbackController {
 
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<FeedbackDTO> getFeedbackById(@PathVariable String id, Authentication authentication) {
         return feedbackService.getFeedbackById(id)
                 .map(ResponseEntity::ok)
@@ -54,7 +53,6 @@ public class FeedbackController {
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<FeedbackDTO> getFeedbackByUserId(Authentication authentication) {
 
         FeedbackDTO feedback = feedbackService.getFeedbackByUserId(authentication);
