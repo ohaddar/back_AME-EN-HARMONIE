@@ -32,17 +32,27 @@ public class FeedbackServiceImp implements FeedbackService {
 
 
     @Override
-    public FeedbackDTO saveFeedbackForUser(String feedbackJson, Authentication authentication) {
+    public FeedbackDTO saveFeedbackForUser(Feedback feedback, Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
-                throw new IllegalArgumentException("Authentication is required.");
+            throw new IllegalArgumentException("Authentication is required.");
         }
-        try {
-            Feedback feedback = new ObjectMapper().readValue(feedbackJson, Feedback.class);
 
+        if (feedback == null) {
+            throw new IllegalArgumentException("Feedback object is required.");
+        }
+
+        try {
+            // Get the authenticated user from the token
             User authenticatedUser = (User) authentication.getPrincipal();
+
+            // Set the authenticated user and publication date
             feedback.setUser(authenticatedUser);
             feedback.setPublicationDate(new Date());
+
+            // Save the feedback
             Feedback savedFeedback = feedbackRepository.save(feedback);
+
+            // Return the DTO
             return new FeedbackDTO(
                     savedFeedback.getId(),
                     savedFeedback.getTitle(),
@@ -54,14 +64,13 @@ public class FeedbackServiceImp implements FeedbackService {
                             savedFeedback.getUser().getLastname(),
                             savedFeedback.getUser().getAvatar(),
                             savedFeedback.getUser().getRole(),
-                            savedFeedback.getUser().getUsername()));
-        }catch (IllegalArgumentException e) {
-              throw new RuntimeException("Error occurred while saving feedback.", e);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+                            savedFeedback.getUser().getUsername()
+                    )
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while saving feedback.", e);
         }
     }
-
     @Override
     public List<FeedbackDTO> getAllFeedbacks () {
         return feedbackRepository.findAll().stream().map(feedback -> new FeedbackDTO(

@@ -29,7 +29,7 @@ public class FeedbackControllerTest {
     private FeedbackService feedbackService;
 
     @InjectMocks
-    private  FeedbackController feedbackController;
+    private FeedbackController feedbackController;
 
     private MockMvc mockMvc;
 
@@ -38,7 +38,6 @@ public class FeedbackControllerTest {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(feedbackController).build();
     }
-
 
     @Test
     void testSaveFeedback() throws Exception {
@@ -51,12 +50,14 @@ public class FeedbackControllerTest {
         feedback.setPublicationDate(null);
         feedback.setUser(user);
 
-        when(feedbackService.saveFeedbackForUser(any(String.class), any())).thenReturn(feedback);
+        String feedbackJson = "{\"title\": \"Test Title\", \"content\": \"Test Content\"}";
+
+        when(feedbackService.saveFeedbackForUser(any(com.doranco.project.entities.Feedback.class), any())).thenReturn(feedback);
 
         mockMvc.perform(post("/feedback/save")
-                        .param("feedback", "{\"title\": \"Test Title\", \"content\": \"Test Content\"}")
-                        .header("Authorization", "Bearer someToken")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(feedbackJson)
+                        .header("Authorization", "Bearer someToken"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("Test Title"))
                 .andExpect(jsonPath("$.content").value("Test Content"));
@@ -82,6 +83,7 @@ public class FeedbackControllerTest {
                 .andExpect(jsonPath("$[0].title").value("Title 1"))
                 .andExpect(jsonPath("$[1].title").value("Title 2"));
     }
+
     @Test
     void testGetFeedbackById() throws Exception {
         FeedbackDTO feedback = new FeedbackDTO();
@@ -97,16 +99,16 @@ public class FeedbackControllerTest {
                 .andExpect(jsonPath("$.title").value("Test Title"))
                 .andExpect(jsonPath("$.content").value("Test Content"));
     }
+
     @Test
     void testGetFeedbackByUserId() throws Exception {
-        UserDTO user = new UserDTO("3L", "John", "DeFee","avatar.png", RoleEnum.USER, "john.defee@example.com" );
+        UserDTO user = new UserDTO("3L", "John", "DeFee", "avatar.png", RoleEnum.USER, "john.defee@example.com");
 
         FeedbackDTO feedback = new FeedbackDTO();
         feedback.setId("1L");
         feedback.setTitle("User Feedback");
         feedback.setContent("Content by John");
         feedback.setUser(user);
-
 
         when(feedbackService.getFeedbackByUserId(any())).thenReturn(feedback);
 
@@ -116,13 +118,26 @@ public class FeedbackControllerTest {
                 .andExpect(jsonPath("$.title").value("User Feedback"))
                 .andExpect(jsonPath("$.content").value("Content by John"));
     }
+
     @Test
     void testSaveFeedback_InvalidJson() throws Exception {
         mockMvc.perform(post("/feedback/save")
-                        .param("feedback", "")
-                        .header("Authorization", "Bearer someToken")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest()) ;
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("")
+                        .header("Authorization", "Bearer someToken"))
+                .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void testSaveFeedback_NullFeedback() throws Exception {
+        when(feedbackService.saveFeedbackForUser(any(), any()))
+                .thenThrow(new IllegalArgumentException("Feedback object is required."));
+
+        String feedbackJson = "{}";
+        mockMvc.perform(post("/feedback/save")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(feedbackJson)
+                        .header("Authorization", "Bearer someToken"))
+                .andExpect(status().isBadRequest());
+    }
 }

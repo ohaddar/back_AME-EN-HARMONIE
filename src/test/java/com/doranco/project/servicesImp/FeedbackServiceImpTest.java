@@ -28,18 +28,21 @@ public class FeedbackServiceImpTest {
 
     @Mock
     private IUserRepository userRepository;
+
     @Mock
     private Authentication authentication;
+
     @InjectMocks
     private FeedbackServiceImp feedbackService;
 
-    private Authentication mockAuth;
     private User user;
     private Feedback feedback;
+    private Feedback savedFeedback;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockAuth = mock(Authentication.class);
+
         user = new User();
         user.setId("1L");
         user.setFirstname("John");
@@ -54,45 +57,86 @@ public class FeedbackServiceImpTest {
         feedback.setContent("This is a feedback.");
         feedback.setPublicationDate(new Date());
         feedback.setUser(user);
+        savedFeedback = new Feedback();
+        savedFeedback.setId("2L");
+        savedFeedback.setTitle("Great Service");
+        savedFeedback.setContent("Very helpful");
+        savedFeedback.setPublicationDate(new Date());
+        savedFeedback.setUser(user);
+    }
+
+    private Feedback createTestFeedback(String title, String content) {
+        Feedback feedback = new Feedback();
+        feedback.setTitle(title);
+        feedback.setContent(content);
+        return feedback;
+    }
+
+    private Feedback createTestFeedbackWithUser(String title, String content, User user) {
+        Feedback feedback = new Feedback();
+        feedback.setTitle(title);
+        feedback.setContent(content);
+        feedback.setUser(user);
+        feedback.setPublicationDate(new Date());
+        return feedback;
     }
 
     @Test
-    public void testSaveFeedbackForUser_Success() {
+    public void testSaveFeedbackForUser_success() {
+        Feedback feedbackToSave = createTestFeedback("Great Service", "Very helpful");
 
-        String feedbackJson = "{\"title\": \"Test Feedback\", \"content\": \"This is a feedback.\"}";
         when(authentication.getPrincipal()).thenReturn(user);
-        when(feedbackRepository.save(any(Feedback.class))).thenAnswer(invocation -> {
-            Feedback savedFeedback = invocation.getArgument(0);
-            savedFeedback.setId("1L");
-            return savedFeedback;
-        });
+        when(feedbackRepository.save(any(Feedback.class))).thenReturn(savedFeedback);
 
-        FeedbackDTO result = feedbackService.saveFeedbackForUser(feedbackJson, authentication);
-
-        assertNotNull(result, "The result should not be null");
-        assertEquals("Test Feedback", result.getTitle());
-        assertEquals("This is a feedback.", result.getContent());
+        FeedbackDTO result = feedbackService.saveFeedbackForUser(feedbackToSave, authentication);
+        assertNotNull(result);
+        assertEquals("Great Service", result.getTitle());
+        assertEquals("Very helpful", result.getContent());
+        verify(feedbackRepository, times(1)).save(any(Feedback.class));
     }
 
+    @Test
+    public void testSaveFeedbackForUser_invalidAuthentication() {
+        authentication = null;
+        Feedback feedbackToSave = createTestFeedback("Invalid Feedback", "No authentication");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            feedbackService.saveFeedbackForUser(feedbackToSave, authentication);
+        });
+    }
+
+    @Test
+    public void testSaveFeedbackForUser_nullFeedback() {
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            feedbackService.saveFeedbackForUser(null, authentication);
+        });
+    }
 
     @Test
     public void testGetAllFeedbacks() {
         Feedback feedback1 = new Feedback();
         feedback1.setId("1L");
         feedback1.setTitle("Feedback 1");
+        feedback1.setContent("Content 1");
+        feedback1.setPublicationDate(new Date());
         feedback1.setUser(user);
 
         Feedback feedback2 = new Feedback();
         feedback2.setId("2L");
         feedback2.setTitle("Feedback 2");
+        feedback2.setContent("Content 2");
+        feedback2.setPublicationDate(new Date());
         feedback2.setUser(user);
 
         when(feedbackRepository.findAll()).thenReturn(List.of(feedback1, feedback2));
 
         List<FeedbackDTO> feedbacks = feedbackService.getAllFeedbacks();
 
-        assertNotNull(feedbacks);
         assertEquals(2, feedbacks.size());
+        assertEquals("Feedback 1", feedbacks.get(0).getTitle());
+        assertEquals("Feedback 2", feedbacks.get(1).getTitle());
     }
 
     @Test
@@ -108,13 +152,11 @@ public class FeedbackServiceImpTest {
         assertEquals(feedback.getUser().getId(), result.get().getUser().getId());
     }
 
-
     @Test
     public void testGetFeedbackById_NotFound() {
         when(feedbackRepository.findById("1L")).thenReturn(Optional.empty());
 
-        RuntimeException thrown;
-        thrown = Assertions.<RuntimeException>assertThrows(RuntimeException.class, () -> {
+        RuntimeException thrown = Assertions.assertThrows(RuntimeException.class, () -> {
             feedbackService.getFeedbackById("1L");
         });
 
@@ -130,6 +172,8 @@ public class FeedbackServiceImpTest {
 
         assertNotNull(result);
         assertEquals("Test Feedback", result.getTitle());
+        assertEquals("This is a feedback.", result.getContent());
+        assertEquals(user.getId(), result.getUser().getId());
     }
 
     @Test
@@ -141,6 +185,14 @@ public class FeedbackServiceImpTest {
             feedbackService.getFeedbackByUserId(authentication);
         });
         assertEquals("Error occurred while fetching user feedback.", exception.getMessage());
+    }
 
+    @Test
+    public void testGetFeedbackByUserId_nullAuthentication() {
+        authentication = null;
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            feedbackService.getFeedbackByUserId(authentication);
+        });
     }
 }

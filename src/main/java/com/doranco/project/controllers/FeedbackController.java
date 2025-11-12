@@ -1,6 +1,7 @@
 package com.doranco.project.controllers;
 
 import com.doranco.project.dto.FeedbackDTO;
+import com.doranco.project.entities.Feedback;
 import com.doranco.project.services.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,13 +21,13 @@ public class FeedbackController {
     FeedbackService feedbackService;
 
     @PostMapping("/save")
-    public ResponseEntity<FeedbackDTO> saveFeedback(   @RequestParam("feedback")  String feedbackJson, Authentication authentication) {
+    public ResponseEntity<FeedbackDTO> saveFeedback(@RequestBody Feedback feedback, Authentication authentication) {
         try {
-            if (feedbackJson == null || feedbackJson.trim().isEmpty()) {
+            if (feedback == null ) {
                 throw new IllegalArgumentException("Feedback JSON body is required.");
             }
 
-            FeedbackDTO savedFeedback = feedbackService.saveFeedbackForUser(feedbackJson, authentication);
+            FeedbackDTO savedFeedback = feedbackService.saveFeedbackForUser(feedback, authentication);
             return ResponseEntity.ok(savedFeedback);
 
         } catch (IllegalArgumentException ex) {

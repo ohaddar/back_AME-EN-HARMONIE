@@ -1,4 +1,5 @@
 package com.doranco.project.servicesImp;
+
 import com.doranco.project.dto.FeedbackDTO;
 import com.doranco.project.entities.Feedback;
 import com.doranco.project.entities.User;
@@ -71,11 +72,27 @@ public class FeedbackServiceIntegrationTest {
         when(context.getAuthentication()).thenReturn(authentication);
     }
 
+    private Feedback createTestFeedback(String title, String content) {
+        Feedback feedback = new Feedback();
+        feedback.setTitle(title);
+        feedback.setContent(content);
+        return feedback;
+    }
+
+    private Feedback createTestFeedbackWithUser(String title, String content, User user) {
+        Feedback feedback = new Feedback();
+        feedback.setTitle(title);
+        feedback.setContent(content);
+        feedback.setUser(user);
+        feedback.setPublicationDate(new Date());
+        return feedback;
+    }
+
     @Test
     public void testSaveFeedbackForUser() throws Exception {
-        String feedbackJson = "{\"title\":\"New Feedback\",\"id\":\"3\",\"content\":\"Test content\"}";
+        Feedback feedback = createTestFeedback("New Feedback", "Test content");
 
-        FeedbackDTO result = feedbackService.saveFeedbackForUser(feedbackJson, authentication);
+        FeedbackDTO result = feedbackService.saveFeedbackForUser(feedback, authentication);
 
         assertNotNull(result);
         assertEquals("New Feedback", result.getTitle());
@@ -89,6 +106,7 @@ public class FeedbackServiceIntegrationTest {
 
         assertNotNull(feedbacks);
         assertFalse(feedbacks.isEmpty());
+        assertTrue(feedbacks.size() >= 1);
     }
 
     @Test
@@ -97,6 +115,8 @@ public class FeedbackServiceIntegrationTest {
 
         assertTrue(result.isPresent());
         assertEquals(testFeedback.getId(), result.get().getId());
+        assertEquals(testFeedback.getTitle(), result.get().getTitle());
+        assertEquals(testFeedback.getContent(), result.get().getContent());
     }
 
     @Test
@@ -106,16 +126,49 @@ public class FeedbackServiceIntegrationTest {
         assertNotNull(result);
         assertEquals(testUser.getId(), result.getUser().getId());
         assertEquals(testFeedback.getId(), result.getId());
+        assertEquals(testFeedback.getTitle(), result.getTitle());
     }
 
     @Test
     public void testSaveFeedbackForUser_invalidAuthentication() {
         authentication = null;
-
-        String feedbackJson = "{\"title\":\"Invalid Feedback\",\"content\":\"No authentication\"}";
+        Feedback feedback = createTestFeedback("Invalid Feedback", "No authentication");
 
         assertThrows(IllegalArgumentException.class, () -> {
-            feedbackService.saveFeedbackForUser(feedbackJson, authentication);
+            feedbackService.saveFeedbackForUser(feedback, authentication);
+        });
+    }
+
+    @Test
+    public void testSaveFeedbackForUser_nullFeedback() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            feedbackService.saveFeedbackForUser(null, authentication);
+        });
+    }
+
+    @Test
+    public void testGetFeedbackById_notFound() {
+        assertThrows(RuntimeException.class, () -> {
+            feedbackService.getFeedbackById("nonexistent-id");
+        });
+    }
+
+    @Test
+    public void testGetFeedbackByUserId_notFound() {
+        User userWithoutFeedback = new User();
+        userWithoutFeedback.setId("999L");
+        userWithoutFeedback.setFirstname("No");
+        userWithoutFeedback.setLastname("Feedback");
+        userWithoutFeedback.setEmail("nofeedback@example.com");
+        userWithoutFeedback.setPassword("password");
+        userWithoutFeedback.setAvatar("avatar.png");
+        userWithoutFeedback.setRole(RoleEnum.USER);
+        userWithoutFeedback = userRepository.save(userWithoutFeedback);
+
+        Authentication authWithoutFeedback = new UsernamePasswordAuthenticationToken(userWithoutFeedback, null);
+
+        assertThrows(RuntimeException.class, () -> {
+            feedbackService.getFeedbackByUserId(authWithoutFeedback);
         });
     }
 }
