@@ -30,7 +30,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public ResponseEntity<?> register(Map<String, String> request) {
-        User user = new User("0",
+        User user = new User(null,
                 request.get("firstname"),
                 request.get("lastname"),
                 request.get("email"),
